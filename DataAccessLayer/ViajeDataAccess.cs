@@ -1,18 +1,15 @@
 ﻿using Domain;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace DataAccessLayer
 {
-    public class ViajeDataAccess
+    public class ViajeDataAccess : DataAccess
     {
-        private static string conexion = "Data Source=DESKTOP-KJ1KTE2\\SQLEXPRESS; Initial Catalog=Encuestas; Persist Security Info=False; User ID=user; Password=user";
         public static Viaje InsertPersona(Viaje viaje)
         {
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
 

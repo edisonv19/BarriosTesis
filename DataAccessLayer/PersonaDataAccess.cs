@@ -5,12 +5,11 @@ using System.Data.SqlClient;
 
 namespace DataAccessLayer
 {
-    public class PersonaDataAccess
+    public class PersonaDataAccess : DataAccess
     {
-        private static string conexion = "Data Source=DESKTOP-KJ1KTE2\\SQLEXPRESS; Initial Catalog=Encuestas; Persist Security Info=False; User ID=user; Password=user";
         public static Persona InsertPersona(Persona persona)
         {
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
 

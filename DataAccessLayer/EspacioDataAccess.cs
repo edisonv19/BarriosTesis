@@ -5,12 +5,11 @@ using System.Data.SqlClient;
 
 namespace DataAccessLayer
 {
-    public class EspacioDataAccess
+    public class EspacioDataAccess : DataAccess
     {
-        private static string conexion = "Data Source=DESKTOP-KJ1KTE2\\SQLEXPRESS; Initial Catalog=Encuestas; Persist Security Info=False; User ID=user; Password=user";
-        public static Espacio InsertEspacio(Espacio espacio)
+        public Espacio InsertEspacio(Espacio espacio)
         {
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
 
@@ -57,10 +56,10 @@ namespace DataAccessLayer
             return espacio;
         }
 
-        public static DataSet GetEspacioByCodigo(Espacio espacio)
+        public DataSet GetEspacioByCodigo(Espacio espacio)
         {
             // Creo la conexión y la transacción
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
 
             DataSet ds = new DataSet();
@@ -95,10 +94,10 @@ namespace DataAccessLayer
             return ds;
         }
 
-        public static DataSet GetEspacioByFilter(Espacio espacio)
+        public DataSet GetEspacioByFilter(Espacio espacio)
         {
             // Creo la conexión y la transacción
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
 
             DataSet ds = new DataSet();

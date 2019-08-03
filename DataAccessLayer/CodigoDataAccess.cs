@@ -5,9 +5,8 @@ using Domain;
 
 namespace DataAccessLayer
 {
-    public class CodigoDataAccess
+    public class CodigoDataAccess : DataAccess
     {
-        private const string conexion = "Data Source=DESKTOP-KJ1KTE2\\SQLEXPRESS; Initial Catalog=Encuestas; Persist Security Info=False; User ID=user; Password=user";
         /// <summary>
         /// Obtiene un código
         /// </summary>
@@ -16,7 +15,7 @@ namespace DataAccessLayer
         public DataSet GetCodigoByClave(Codigo codigo)
         {
             // Creo la conexión y la transacción
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
 
             DataSet ds = new DataSet();

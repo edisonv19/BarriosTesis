@@ -5,12 +5,11 @@ using System.Data.SqlClient;
 
 namespace DataAccessLayer
 {
-    public class LugarDataAccess
+    public class LugarDataAccess : DataAccess
     {
-        private static string conexion = "Data Source=DESKTOP-KJ1KTE2\\SQLEXPRESS; Initial Catalog=Encuestas; Persist Security Info=False; User ID=user; Password=user";
         public static Lugar Insertlugar(Lugar lugar)
         {
-            SqlConnection oConn = new SqlConnection(conexion);
+            SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
 

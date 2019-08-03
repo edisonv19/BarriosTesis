@@ -12,7 +12,7 @@ namespace Domain
         public string Grupo { get; set; }
         public string Descripcion { get; set; }
 
-        public Codigo GetFromDataRow(DataRow row)
+        public static Codigo GetFromDataRow(DataRow row)
         {
             return new Codigo()
             {
@@ -24,7 +24,7 @@ namespace Domain
             };
         }
 
-        public List<Codigo> GetFromDS(DataSet ds)
+        public static List<Codigo> GetFromDS(DataSet ds)
         {
             if (ds.Tables.Count == 0) return null;
 
