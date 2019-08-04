@@ -1,10 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DataAccessLayer;
+using Domain;
 
-namespace BusinessLayer.Lugar
+namespace BusinessLayer
 {
     public class LugarBusiness
     {
+        public Lugar Insert(Lugar lugar)
+        {
+            var EspacioDA = new LugarDataAccess();
+
+            lugar = EspacioDA.Insert(lugar);
+
+            return lugar;
+        }
     }
 }

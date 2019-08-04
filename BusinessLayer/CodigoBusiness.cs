@@ -9,7 +9,7 @@ namespace BusinessLayer
         public Codigo GetCodigoByClave(Codigo codigo)
         {
             var codigoDA = new CodigoDataAccess();
-            DataSet ds = codigoDA.GetCodigoByClave(codigo);
+            DataSet ds = codigoDA.GetByClave(codigo);
 
             if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {

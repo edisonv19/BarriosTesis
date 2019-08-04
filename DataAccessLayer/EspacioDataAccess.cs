@@ -2,12 +2,15 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using Utils.Helpers;
 
 namespace DataAccessLayer
 {
     public class EspacioDataAccess : DataAccess
     {
-        public Espacio InsertEspacio(Espacio espacio)
+        public EspacioDataAccess() : base() { }
+
+        public Espacio Insert(Espacio espacio)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
@@ -21,7 +24,7 @@ namespace DataAccessLayer
                     oComm.Transaction = oTran;
 
                     oComm.CommandType = CommandType.StoredProcedure;
-                    oComm.CommandText = "Espacio_Insert";
+                    oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
                     oComm.Parameters.Add(new SqlParameter("@IdEspacio", SqlDbType.Int, 0, ParameterDirection.InputOutput, false, 0, 0, null, DataRowVersion.Original, espacio.IdEspacio));
                     oComm.Parameters.Add(new SqlParameter("@IdCategoria", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.IdCategoria));
@@ -42,7 +45,7 @@ namespace DataAccessLayer
                     oTran.Commit();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 oTran.Rollback();
                 throw new Exception("Hubo un error al insertar a una compañia en la base de datos.");
@@ -56,7 +59,7 @@ namespace DataAccessLayer
             return espacio;
         }
 
-        public DataSet GetEspacioByCodigo(Espacio espacio)
+        public DataSet GetByCodigo(Espacio espacio)
         {
             // Creo la conexión y la transacción
             SqlConnection oConn = new SqlConnection(connectionString);
@@ -94,7 +97,7 @@ namespace DataAccessLayer
             return ds;
         }
 
-        public DataSet GetEspacioByFilter(Espacio espacio)
+        public DataSet GetByFilter(Espacio espacio)
         {
             // Creo la conexión y la transacción
             SqlConnection oConn = new SqlConnection(connectionString);

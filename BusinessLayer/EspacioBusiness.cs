@@ -1,9 +1,7 @@
 ﻿using DataAccessLayer;
 using Domain;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace BusinessLayer
 {
@@ -125,7 +123,7 @@ namespace BusinessLayer
         public static Espacio GetEspacioByCodigo(Espacio espacio)
         {
             var EspacioDA = new EspacioDataAccess();
-            DataSet ds = EspacioDA.GetEspacioByCodigo(espacio);
+            DataSet ds = EspacioDA.GetByCodigo(espacio);
 
             if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
@@ -137,7 +135,7 @@ namespace BusinessLayer
         public static List<Espacio> GetEspacioByFilter(Espacio espacio)
         {
             var EspacioDA = new EspacioDataAccess();
-            DataSet ds = EspacioDA.GetEspacioByFilter(espacio);
+            DataSet ds = EspacioDA.GetByFilter(espacio);
 
             if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
@@ -162,7 +160,7 @@ namespace BusinessLayer
             {
                 espacio.IdCategoria = idCategoria;
                 espacio.IdPadre = GetEspacioByCodigo(new Espacio() { Codigo = zonas[espacio.Codigo] }).IdEspacio;
-                espaciosNew.Add(EspacioDA.InsertEspacio(espacio));
+                espaciosNew.Add(EspacioDA.Insert(espacio));
             }
 
             return espaciosNew;

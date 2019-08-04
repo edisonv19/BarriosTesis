@@ -2,12 +2,15 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using Utils.Helpers;
 
 namespace DataAccessLayer
 {
     public class LugarDataAccess : DataAccess
     {
-        public static Lugar Insertlugar(Lugar lugar)
+        public LugarDataAccess() : base() { }
+
+        public Lugar Insert(Lugar lugar)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
@@ -21,7 +24,7 @@ namespace DataAccessLayer
                     oComm.Transaction = oTran;
 
                     oComm.CommandType = CommandType.StoredProcedure;
-                    oComm.CommandText = "lugar_Insert";
+                    oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
                     oComm.Parameters.Add(new SqlParameter("@Idlugar", SqlDbType.Int, 0, ParameterDirection.InputOutput, false, 0, 0, null, DataRowVersion.Original, lugar.IdLugar));
                     oComm.Parameters.Add(new SqlParameter("@Calle", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Calle));
@@ -46,7 +49,7 @@ namespace DataAccessLayer
                     oTran.Commit();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 oTran.Rollback();
                 throw new Exception("Hubo un error al insertar a una compañia en la base de datos.");

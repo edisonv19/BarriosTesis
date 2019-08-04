@@ -2,12 +2,15 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using Utils.Helpers;
 
 namespace DataAccessLayer
 {
     public class PersonaDataAccess : DataAccess
     {
-        public static Persona InsertPersona(Persona persona)
+        public PersonaDataAccess() : base() { }
+
+        public Persona Insert(Persona persona)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
@@ -21,7 +24,7 @@ namespace DataAccessLayer
                     oComm.Transaction = oTran;
 
                     oComm.CommandType = CommandType.StoredProcedure;
-                    oComm.CommandText = "Persona_Insert";
+                    oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
                     oComm.Parameters.Add(new SqlParameter("@IdPersona", SqlDbType.Int, 0, ParameterDirection.InputOutput, false, 0, 0, null, DataRowVersion.Original, persona.IdPersona));
                     oComm.Parameters.Add(new SqlParameter("@Nombre", SqlDbType.NVarChar, 50, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Nombre));
@@ -46,7 +49,7 @@ namespace DataAccessLayer
                     oTran.Commit();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 oTran.Rollback();
                 throw new Exception("Error to insert a Person");

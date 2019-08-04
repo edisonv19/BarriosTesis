@@ -1,10 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DataAccessLayer;
+using Domain;
 
-namespace BusinessLayer.Persona
+namespace BusinessLayer
 {
     public class PersonaBusiness
     {
+        public Persona Insert(Persona persona)
+        {
+            var PersonaDA = new PersonaDataAccess();
+
+            persona = PersonaDA.Insert(persona);
+
+            return persona;
+        }
     }
 }
