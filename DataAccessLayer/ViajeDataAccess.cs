@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using DataAccessLayer.Interfaces;
+using Domain;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,7 +7,7 @@ using Utils.Helpers;
 
 namespace DataAccessLayer
 {
-    public class ViajeDataAccess : DataAccess
+    public class ViajeDataAccess : DataAccess, IViajeRepository
     {
         public ViajeDataAccess() : base(){ }
 

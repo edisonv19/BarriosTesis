@@ -60,9 +60,9 @@ namespace ReadBarrios.Generators
             return elements.Where(y => y.Name.LocalName == localName).Select(i => i.Value).LastOrDefault();
         }
 
-        private List<Coordenada> GetCoordinadas(string coordinatesStr)
+        private List<Coordinate> GetCoordinadas(string coordinatesStr)
         {
-            List<Coordenada> coordenadas = new List<Coordenada>();
+            List<Coordinate> coordenadas = new List<Coordinate>();
 
             // Saco los saltos de linea
             coordinatesStr = coordinatesStr.Replace("\n", string.Empty);
@@ -78,7 +78,7 @@ namespace ReadBarrios.Generators
             foreach (string coor in coordinatesArray)
             {
                 string[] coordenadaPart = coor.Split(",");
-                Coordenada coordenada = new Coordenada() { latitude = decimal.Parse(coordenadaPart[1], CultureInfo.InvariantCulture), longitude = decimal.Parse(coordenadaPart[0], CultureInfo.InvariantCulture) };
+                Coordinate coordenada = new Coordinate(double.Parse(coordenadaPart[1], CultureInfo.InvariantCulture), double.Parse(coordenadaPart[0], CultureInfo.InvariantCulture));
                 coordenadas.Add(coordenada);
             }
 

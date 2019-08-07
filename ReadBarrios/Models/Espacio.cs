@@ -8,7 +8,7 @@ namespace ReadBarrios.Models
     {
         public int? IdEspacio { get; set; }
         public string name { get; set; }
-        public List<Coordenada> coordinates { get; set; }
+        public List<Coordinate> coordinates { get; set; }
         public string Coordenadas { get; set; }
         public int? IdCategoria { get; set; }
         public string Descripcion { get; set; }

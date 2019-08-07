@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using DataAccessLayer.Interfaces;
+using Domain;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,16 +7,16 @@ using Utils.Helpers;
 
 namespace DataAccessLayer
 {
-    public class LugarDataAccess : DataAccess
+    public class LugarDataAccess : DataAccess, ILugarRepository
     {
         public LugarDataAccess() : base() { }
 
-        public Lugar Insert(Lugar lugar)
+        public int Insert(Lugar lugar)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
-
+            int Id;
             try
             {
                 using (SqlCommand oComm = new SqlCommand())
@@ -26,7 +27,6 @@ namespace DataAccessLayer
                     oComm.CommandType = CommandType.StoredProcedure;
                     oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
-                    oComm.Parameters.Add(new SqlParameter("@Idlugar", SqlDbType.Int, 0, ParameterDirection.InputOutput, false, 0, 0, null, DataRowVersion.Original, lugar.IdLugar));
                     oComm.Parameters.Add(new SqlParameter("@Calle", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Calle));
                     oComm.Parameters.Add(new SqlParameter("@Numero", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Numero));
                     oComm.Parameters.Add(new SqlParameter("@Latitud", SqlDbType.Decimal, 100, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Latitud));
@@ -37,14 +37,10 @@ namespace DataAccessLayer
                     oComm.Parameters.Add(new SqlParameter("@Descripcion", SqlDbType.VarChar, 200, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Descripcion));
                     oComm.Parameters.Add(new SqlParameter("@Radio", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.Radio));
 
-                    int rowsAffected = oComm.ExecuteNonQuery();
+                    oComm.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int, 0, ParameterDirection.ReturnValue, true, 0, 0, null, DataRowVersion.Original, lugar.Radio));
+                    oComm.ExecuteNonQuery();
 
-                    if (rowsAffected == 0)
-                    {
-                        throw new Exception("No se insertó ningún registro. Por favor, reintente la operación.");
-                    }
-
-                    lugar.IdLugar = (int)oComm.Parameters["@Idlugar"].Value;
+                    Id = (int)oComm.Parameters["@Id"].Value;
 
                     oTran.Commit();
                 }
@@ -52,7 +48,7 @@ namespace DataAccessLayer
             catch (Exception)
             {
                 oTran.Rollback();
-                throw new Exception("Hubo un error al insertar a una compañia en la base de datos.");
+                throw new Exception($"Hubo un error al insertar a un {tableName} en la base de datos.");
             }
             finally
             {
@@ -60,7 +56,49 @@ namespace DataAccessLayer
                 oTran.Dispose();
             }
 
-            return lugar;
+            return Id;
+        }
+
+        public Lugar GetByLatLng(Lugar lugar)
+        {
+            // Creo la conexión y la transacción
+            SqlConnection oConn = new SqlConnection(connectionString);
+            oConn.Open();
+
+            DataSet ds = new DataSet();
+
+            try
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                {
+                    using (SqlCommand oComm = new SqlCommand())
+                    {
+                        oComm.Connection = oConn;
+
+                        oComm.CommandType = CommandType.StoredProcedure;
+                        oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
+
+                        oComm.Parameters.Add(new SqlParameter("@Latitud", SqlDbType.Decimal, 0, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Latitud));
+                        oComm.Parameters.Add(new SqlParameter("@Longitud", SqlDbType.Decimal, 100, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Longitud));
+                        adapter.SelectCommand = oComm;
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                oConn.Close();
+            }
+
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateItemFromRow<Lugar>(ds.Tables[0].Rows[0]);
+            }
+            return null;
         }
     }
 }
