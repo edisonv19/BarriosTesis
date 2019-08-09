@@ -11,32 +11,40 @@ GO
 -- =================================================
 
 CREATE PROCEDURE [dbo].[Persona_Insert]
-	@IdPersona 		INT = NULL OUTPUT,
-	@IdCategoria 	INT,
-	@Descripcion 	NVARCHAR(200) = NULL,
-	@Coordenadas	NVARCHAR(MAX) = NULL,
-	@IdPadre		INT = NULL	,
-	@Codigo			VARCHAR(50)
+	@Nombre		NVARCHAR(50),
+	@Edad		INT,
+	@IdLugar	INT,
+	@IdSocioEconomico 	INT,
+	@IdSexo		INT,
+	@IdNivelEducativo	INT,
+	@IdOcupacion	INT,
+	@IdTipoZonaResidencial	INT,
+	@IdEstacion	INT = NULL
 AS
 BEGIN
-	INSERT INTO [Persona] (
-			[IdCategoria],
-			[Descripcion],
-			[Coordenadas],
-			[IdPadre],
-			[Codigo]
-			)
-	VALUES (
-			@IdCategoria,
-			@Descripcion,
-			@Coordenadas,
-			@IdPadre,
-			@Codigo
+	INSERT INTO [dbo].[Persona](
+		[Nombre]
+		,[Edad]
+		,[IdLugar]
+		,[IdSocioEconomico]
+		,[IdSexo]
+		,[IdNivelEducativo]
+		,[IdOcupacion]
+		,[IdTipoZonaResidencial]
+		,[IdEstacion]
+	)
+    VALUES(
+		@Nombre
+		,@Edad
+		,@IdLugar
+		,@IdSocioEconomico
+		,@IdSexo
+		,@IdNivelEducativo
+		,@IdOcupacion
+		,@IdTipoZonaResidencial
+		,@IdEstacion
 	)
 
-	SELECT	@IdPersona = [IdPersona]
-	FROM 	[Persona]
-	WHERE 	[IdPersona] = IDENT_CURRENT('Persona')
-
+	SELECT IDENT_CURRENT('Persona');
 END
 GO

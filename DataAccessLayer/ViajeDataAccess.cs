@@ -11,11 +11,12 @@ namespace DataAccessLayer
     {
         public ViajeDataAccess() : base(){ }
 
-        public Viaje Insert(Viaje viaje)
+        public int Insert(Viaje viaje)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
+            int id;
 
             try
             {
@@ -39,14 +40,8 @@ namespace DataAccessLayer
                     oComm.Parameters.Add(new SqlParameter("@HoraFin", SqlDbType.Time, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, viaje.HoraFin));
                     oComm.Parameters.Add(new SqlParameter("@IdTransporte", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, viaje.IdTransporte));
                     oComm.Parameters.Add(new SqlParameter("@Observaciones", SqlDbType.NVarChar, 200, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, viaje.Observaciones));
-                    int rowsAffected = oComm.ExecuteNonQuery();
 
-                    if (rowsAffected == 0)
-                    {
-                        throw new Exception("Couldn't insert any rows");
-                    }
-
-                    viaje.IdViaje = (int)oComm.Parameters["@IdViaje"].Value;
+                    id = (int)oComm.ExecuteScalar();
 
                     oTran.Commit();
                 }
@@ -62,7 +57,7 @@ namespace DataAccessLayer
                 oTran.Dispose();
             }
 
-            return viaje;
+            return id;
         }
     }
 }

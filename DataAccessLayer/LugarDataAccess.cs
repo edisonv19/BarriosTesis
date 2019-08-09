@@ -16,7 +16,7 @@ namespace DataAccessLayer
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
-            int Id;
+            int id;
             try
             {
                 using (SqlCommand oComm = new SqlCommand())
@@ -37,10 +37,7 @@ namespace DataAccessLayer
                     oComm.Parameters.Add(new SqlParameter("@Descripcion", SqlDbType.VarChar, 200, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Descripcion));
                     oComm.Parameters.Add(new SqlParameter("@Radio", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.Radio));
 
-                    oComm.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int, 0, ParameterDirection.ReturnValue, true, 0, 0, null, DataRowVersion.Original, lugar.Radio));
-                    oComm.ExecuteNonQuery();
-
-                    Id = (int)oComm.Parameters["@Id"].Value;
+                    id = (int)oComm.ExecuteScalar();
 
                     oTran.Commit();
                 }
@@ -56,7 +53,7 @@ namespace DataAccessLayer
                 oTran.Dispose();
             }
 
-            return Id;
+            return id;
         }
 
         public Lugar GetByLatLng(Lugar lugar)

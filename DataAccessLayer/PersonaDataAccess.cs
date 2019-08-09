@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using DataAccessLayer.Interfaces;
+using Domain;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,16 +7,16 @@ using Utils.Helpers;
 
 namespace DataAccessLayer
 {
-    public class PersonaDataAccess : DataAccess
+    public class PersonaDataAccess : DataAccess, IPersonaRepository
     {
         public PersonaDataAccess() : base() { }
 
-        public Persona Insert(Persona persona)
+        public int Insert(Persona persona)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
-
+            int id;
             try
             {
                 using (SqlCommand oComm = new SqlCommand())
@@ -26,7 +27,6 @@ namespace DataAccessLayer
                     oComm.CommandType = CommandType.StoredProcedure;
                     oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
-                    oComm.Parameters.Add(new SqlParameter("@IdPersona", SqlDbType.Int, 0, ParameterDirection.InputOutput, false, 0, 0, null, DataRowVersion.Original, persona.IdPersona));
                     oComm.Parameters.Add(new SqlParameter("@Nombre", SqlDbType.NVarChar, 50, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Nombre));
                     oComm.Parameters.Add(new SqlParameter("@Edad", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Edad));
                     oComm.Parameters.Add(new SqlParameter("@IdLugar", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdLugar));
@@ -37,14 +37,7 @@ namespace DataAccessLayer
                     oComm.Parameters.Add(new SqlParameter("@IdTipoZonaResidencial", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdTipoZonaResidencial));
                     oComm.Parameters.Add(new SqlParameter("@IdEstacion", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdEstacion));
 
-                    int rowsAffected = oComm.ExecuteNonQuery();
-
-                    if (rowsAffected == 0)
-                    {
-                        throw new Exception("Couldn't insert any rows");
-                    }
-
-                    persona.IdPersona = (int)oComm.Parameters["@IdPersona"].Value;
+                    id = (int)oComm.ExecuteScalar();
 
                     oTran.Commit();
                 }
@@ -60,7 +53,7 @@ namespace DataAccessLayer
                 oTran.Dispose();
             }
 
-            return persona;
+            return id;
         }
     }
 }

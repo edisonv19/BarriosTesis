@@ -4,6 +4,6 @@ namespace DataAccessLayer.Interfaces
 {
     public interface IViajeRepository
     {
-        Viaje Insert(Viaje viaje);
+        int Insert(Viaje viaje);
     }
 }
