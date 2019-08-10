@@ -13,5 +13,20 @@ namespace Utils.Helpers
         {
             return memberName;
         }
+
+        public static double? GetDouble(this object value)
+        {
+            return double.TryParse(value.ToString(), out double lat_o) ? (double?)lat_o : null;
+        }
+
+        public static string GetString(this object value)
+        {
+            return value.ToString();
+        }
+
+        public static int? GetInt(this object value)
+        {
+            return int.TryParse(value.ToString(), out int lat_o) ? (int?)lat_o : null;
+        }
     }
 }

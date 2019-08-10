@@ -16,7 +16,9 @@ CREATE PROCEDURE [dbo].[Lugar_GetByLatLng]
 AS
 BEGIN
 	SELECT
-		IdLugar
+		IdLugar,
+		Latitud,
+		Longitud
 	FROM
 		[dbo].[Lugar] lugar
 	WHERE

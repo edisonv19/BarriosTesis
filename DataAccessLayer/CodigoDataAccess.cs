@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using DataAccessLayer.Interfaces;
 using Domain;
 using Utils.Helpers;
 
 namespace DataAccessLayer
 {
-    public class CodigoDataAccess : DataAccess
+    public class CodigoDataAccess : DataAccess, ICodigoRepository
     {
         public CodigoDataAccess() : base() { }
 
-        public DataSet GetByClave(Codigo codigo)
+        public Codigo GetByClave(Codigo codigo)
         {
             // Creo la conexión y la transacción
             SqlConnection oConn = new SqlConnection(connectionString);
@@ -46,8 +47,11 @@ namespace DataAccessLayer
                 oConn.Close();
             }
 
-            return ds;
-
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateItemFromRow<Codigo>(ds.Tables[0].Rows[0]);
+            }
+            return null;
         }
     }
 }
