@@ -1,6 +1,8 @@
-﻿namespace Domain
+﻿using Domain.Interfaces;
+
+namespace Domain
 {
-    public class Lugar
+    public class Lugar : IDataPerson
     {
         public int? IdLugar { get; set; }
         public string Calle { get; set; }

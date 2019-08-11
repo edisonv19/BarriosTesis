@@ -1,6 +1,9 @@
-﻿using DataAccessLayer;
+﻿using BusinessLayer.Factories;
+using BusinessLayer.Interfaces;
+using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
+using Domain.Interfaces;
 using OfficeOpenXml;
 using System.Collections.Generic;
 using System.IO;
@@ -14,17 +17,19 @@ namespace BusinessLayer
         private IPersonaRepository _personaRepository;
         private ILugarRepository _lugarRepository;
         private ICodigoRepository _codigoRepository;
+        private IAbstractFactory<IDataPerson> _dataPersonFactory;
 
         // Cache
-        private Dictionary<string, object> _cache;
+        private Dictionary<string, IDataPerson> _cache;
 
         public PersonaBusiness()
         {
             _personaRepository = new PersonaDataAccess();
             _lugarRepository = new LugarDataAccess();
             _codigoRepository = new CodigoDataAccess();
+            _dataPersonFactory = new DataPersonFactory();
 
-            _cache = new Dictionary<string, object>();
+            _cache = new Dictionary<string, IDataPerson>();
         }
 
         public Persona Insert(Persona persona)
@@ -128,70 +133,29 @@ namespace BusinessLayer
 
                     Insert(persona);
                 }
-
-                package.SaveAs(new FileInfo(pathOut));
             }
 
             return null;
         }
 
-        private object GetOfCache(string key)
+        private IDataPerson GetOfCache(string key)
         {
             return _cache[key];
         }
 
-        private void SetToCache(string key, object o)
+        private void SetToCache(string key, IDataPerson o)
         {
             _cache.Add(key, o);
         }
 
-        private object GetObject(string key)
+        private IDataPerson GetObject(string key)
         {
             if (GetOfCache(key) == null)
             {
-                string group = key.Split("_")[0];
-                string data = key.Split("_")[1];
+                IDataPerson dataPerson = _dataPersonFactory.GetData(key);
+                SetToCache(key, dataPerson);
 
-                switch (group)
-                {
-                    case "latlng":
-                        Lugar lugar = _lugarRepository.GetByLatLng(new Lugar() { Latitud = data.Split(";")[0].GetDouble(), Longitud = data.Split(";")[1].GetDouble() });
-                        SetToCache(key, lugar);
-
-                        return lugar;
-                    case "ingresos":
-                        Codigo nivelSocioEcon = _codigoRepository.GetByClave(new Codigo() { Grupo = "NivelSocioEconomico", Clave = data.Split(";")[0] });
-                        SetToCache(key, nivelSocioEcon);
-
-                        return nivelSocioEcon;
-                    case "sexo":
-                        Codigo sexo = _codigoRepository.GetByClave(new Codigo() { Grupo = "Sexo", Clave = data.Split(";")[0] });
-                        SetToCache(key, sexo);
-
-                        return sexo;
-                    case "estudio":
-                        Codigo estudio = _codigoRepository.GetByClave(new Codigo() { Grupo = "NivelEducativo", Clave = data.Split(";")[0] });
-                        SetToCache(key, estudio);
-
-                        return estudio;
-                    case "ocupacion":
-                        Codigo ocupacion = _codigoRepository.GetByClave(new Codigo() { Grupo = "Ocupacion", Clave = data.Split(";")[0] });
-                        SetToCache(key, ocupacion);
-
-                        return ocupacion;
-                    case "zonaResidencial":
-                        Codigo zonaResidencial = _codigoRepository.GetByClave(new Codigo() { Grupo = "TipoZonaResidencia", Clave = data.Split(";")[0] });
-                        SetToCache(key, zonaResidencial);
-
-                        return zonaResidencial;
-                    case "estacion":
-                        Codigo estacion = _codigoRepository.GetByClave(new Codigo() { Grupo = "Estacion", Clave = data.Split(";")[0] });
-                        SetToCache(key, estacion);
-
-                        return estacion;
-                    default:
-                        return null;
-                }
+                return dataPerson;
             }
             else
             {
