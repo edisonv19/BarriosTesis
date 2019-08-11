@@ -2,7 +2,7 @@
 
 namespace Domain
 {
-    public class Codigo : IDataPerson
+    public class Codigo : IDataEncuesta
     {
         public int? IdCodigo { get; set; }
         public string Valor { get; set; }

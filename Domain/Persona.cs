@@ -1,4 +1,6 @@
-﻿namespace Domain
+﻿using Domain.Interfaces;
+
+namespace Domain
 {
     public class Persona
     {

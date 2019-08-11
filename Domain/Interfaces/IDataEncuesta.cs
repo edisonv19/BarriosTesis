@@ -1,6 +1,6 @@
 ﻿namespace Domain.Interfaces
 {
-    public interface IDataPerson
+    public interface IDataEncuesta
     {
     }
 }

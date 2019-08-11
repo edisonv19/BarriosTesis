@@ -1,11 +1,11 @@
-﻿using BusinessLayer.Factories;
+﻿using BusinessLayer.Caches;
+using BusinessLayer.Factories;
 using BusinessLayer.Interfaces;
 using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
 using Domain.Interfaces;
 using OfficeOpenXml;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Utils.Helpers;
@@ -14,22 +14,16 @@ namespace BusinessLayer
 {
     public class PersonaBusiness
     {
+        // Repositories
         private IPersonaRepository _personaRepository;
-        private ILugarRepository _lugarRepository;
-        private ICodigoRepository _codigoRepository;
-        private IAbstractFactory<IDataPerson> _dataPersonFactory;
 
         // Cache
-        private Dictionary<string, IDataPerson> _cache;
+        private ICache<IDataEncuesta> _cache;
 
         public PersonaBusiness()
         {
             _personaRepository = new PersonaDataAccess();
-            _lugarRepository = new LugarDataAccess();
-            _codigoRepository = new CodigoDataAccess();
-            _dataPersonFactory = new DataPersonFactory();
-
-            _cache = new Dictionary<string, IDataPerson>();
+            _cache = new DataCache<IDataEncuesta>(new DataEncuestaFactory());
         }
 
         public Persona Insert(Persona persona)
@@ -39,8 +33,10 @@ namespace BusinessLayer
             return persona;
         }
 
-        public List<Persona> InsertByExcel(FileInfo file, string pathOut)
+        public int InsertByExcel(FileInfo file)
         {
+            int count = 0;
+
             // Obtengo la hoja de excel
             using (ExcelPackage package = new ExcelPackage(file))
             {
@@ -69,7 +65,7 @@ namespace BusinessLayer
                         Longitud = excelWorksheet.Cells[i, lgn_j].Value.GetDouble()
                     };
 
-                    lugar = (Lugar)GetObject($"latlng_{lugar.Latitud};{lugar.Longitud}");
+                    lugar = (Lugar)_cache.GetObject($"lugar_{lugar.Latitud};{lugar.Longitud}");
 
                     // Id SocioEconómico
                     Codigo nivelSocioEcon = new Codigo()
@@ -77,7 +73,7 @@ namespace BusinessLayer
                         Clave = excelWorksheet.Cells[i, ingreso_j].Value.GetString()
                     };
 
-                    nivelSocioEcon = (Codigo)GetObject($"ingreso_{nivelSocioEcon.Clave}");
+                    nivelSocioEcon = (Codigo)_cache.GetObject($"codigo_NivelSocioEconomico;{nivelSocioEcon.Clave}");
 
                     // Id Sexo
                     Codigo sexo = new Codigo()
@@ -85,7 +81,7 @@ namespace BusinessLayer
                         Clave = excelWorksheet.Cells[i, sexo_j].Value.GetString()
                     };
 
-                    sexo = (Codigo)GetObject($"sexo_{nivelSocioEcon.Clave}");
+                    sexo = (Codigo)_cache.GetObject($"codigo_Sexo;{nivelSocioEcon.Clave}");
 
                     // Id NivelEducativo
                     Codigo nivelEducativo = new Codigo()
@@ -93,7 +89,7 @@ namespace BusinessLayer
                         Clave = excelWorksheet.Cells[i, estudios_j].Value.GetString()
                     };
 
-                    nivelEducativo = (Codigo)GetObject($"estudio_{nivelEducativo.Clave}");
+                    nivelEducativo = (Codigo)_cache.GetObject($"codigo_NivelEducativo;{nivelEducativo.Clave}");
 
                     // Id Ocupacion
                     Codigo ocupacion = new Codigo()
@@ -101,7 +97,7 @@ namespace BusinessLayer
                         Clave = excelWorksheet.Cells[i, ocupacion_j].Value.GetString()
                     };
 
-                    ocupacion = (Codigo)GetObject($"ocupacion_{ocupacion.Clave}");
+                    ocupacion = (Codigo)_cache.GetObject($"codigo_Ocupacion;{ocupacion.Clave}");
 
                     // Id Zona Residencial
                     Codigo zonaResidencial = new Codigo()
@@ -109,13 +105,15 @@ namespace BusinessLayer
                         Clave = excelWorksheet.Cells[i, zonaResid_j].Value.GetString()
                     };
 
+                    zonaResidencial = (Codigo)_cache.GetObject($"codigo_TipoZonaResidencia;{zonaResidencial.Clave}");
+
                     // Id Estadion
                     Codigo estacion = new Codigo()
                     {
                         Clave = excelWorksheet.Cells[i, estacion_j].Value.GetString()
                     };
 
-                    estacion = (Codigo)GetObject($"estacion_{estacion.Clave}");
+                    estacion = (Codigo)_cache.GetObject($"codigo_Estacion;{estacion.Clave}");
 
                     // Persona
 
@@ -131,36 +129,12 @@ namespace BusinessLayer
                         IdEstacion = estacion.IdCodigo
                     };
 
-                    Insert(persona);
+                    persona = Insert(persona);
+                    count = persona.IdPersona == null ? count : count++;
                 }
             }
 
-            return null;
-        }
-
-        private IDataPerson GetOfCache(string key)
-        {
-            return _cache[key];
-        }
-
-        private void SetToCache(string key, IDataPerson o)
-        {
-            _cache.Add(key, o);
-        }
-
-        private IDataPerson GetObject(string key)
-        {
-            if (GetOfCache(key) == null)
-            {
-                IDataPerson dataPerson = _dataPersonFactory.GetData(key);
-                SetToCache(key, dataPerson);
-
-                return dataPerson;
-            }
-            else
-            {
-                return GetOfCache(key);
-            }
+            return count;
         }
     }
 }

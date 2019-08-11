@@ -2,7 +2,7 @@
 
 namespace Domain
 {
-    public class Lugar : IDataPerson
+    public class Lugar : IDataEncuesta
     {
         public int? IdLugar { get; set; }
         public string Calle { get; set; }
