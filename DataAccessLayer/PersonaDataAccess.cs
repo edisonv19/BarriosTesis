@@ -34,7 +34,6 @@ namespace DataAccessLayer
                     oComm.Parameters.Add(new SqlParameter("@IdSexo", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdSexo));
                     oComm.Parameters.Add(new SqlParameter("@IdNivelEducativo", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdNivelEducativo));
                     oComm.Parameters.Add(new SqlParameter("@IdOcupacion", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdOcupacion));
-                    oComm.Parameters.Add(new SqlParameter("@IdTipoZonaResidencial", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdTipoZonaResidencial));
                     oComm.Parameters.Add(new SqlParameter("@IdEstacion", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdEstacion));
 
                     id = (int)oComm.ExecuteScalar();
@@ -54,6 +53,11 @@ namespace DataAccessLayer
             }
 
             return id;
+        }
+
+        public Persona GetByCodigo(Persona persona)
+        {
+            throw new NotImplementedException();
         }
     }
 }

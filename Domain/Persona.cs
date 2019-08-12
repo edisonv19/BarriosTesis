@@ -2,7 +2,7 @@
 
 namespace Domain
 {
-    public class Persona
+    public class Persona: IDataEncuesta
     {
         public int? IdPersona { get; set; }
         public string Nombre { get; set; }
@@ -12,7 +12,6 @@ namespace Domain
         public int? IdSexo { get; set; }
         public int? IdNivelEducativo { get; set; }
         public int? IdOcupacion { get; set; }
-        public int? IdTipoZonaResidencial { get; set; }
         public int? IdEstacion { get; set; }
     }
 }

@@ -10,9 +10,10 @@ namespace Domain
         public double? Latitud { get; set; }
         public double? Longitud { get; set; }
         public int IdRadioCensal { get; set; }
-        public int IdZona { get; set; }
+        public int? IdZona { get; set; }
         public int IdCategoria { get; set; }
         public string Descripcion { get; set; }
         public int Radio { get; set; }
+        public int? IdTipoZonaResidencial { get; set; }
     }
 }

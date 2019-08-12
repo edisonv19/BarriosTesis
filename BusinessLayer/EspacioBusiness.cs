@@ -1,12 +1,15 @@
 ﻿using DataAccessLayer;
+using DataAccessLayer.Interfaces;
 using Domain;
 using System.Collections.Generic;
-using System.Data;
 
 namespace BusinessLayer
 {
     public class EspacioBusiness
     {
+        // Repositories
+        private IEspacioRepository _espacioRepository;
+
         // Diccionario de relación de RRCC y zonas
         public static readonly Dictionary<string, string> zonas = new Dictionary<string, string>()
         {
@@ -120,37 +123,33 @@ namespace BusinessLayer
             {"-1", "Fuera de zona"}
         };
 
-        public static Espacio GetEspacioByCodigo(Espacio espacio)
+        public EspacioBusiness()
         {
-            var EspacioDA = new EspacioDataAccess();
-            DataSet ds = EspacioDA.GetByCodigo(espacio);
-
-            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-            {
-                return Espacio.GetFromDataRow(ds.Tables[0].Rows[0]);
-            }
-            return null;
+            _espacioRepository = new EspacioDataAccess();
         }
 
-        public static List<Espacio> GetEspacioByFilter(Espacio espacio)
+        public Espacio GetByCodigo(Espacio espacio)
         {
-            var EspacioDA = new EspacioDataAccess();
-            DataSet ds = EspacioDA.GetByFilter(espacio);
+            return _espacioRepository.GetByCodigo(espacio);
+        }
 
-            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-            {
-                return Espacio.GetFromDS(ds);
-            }
-            return null;
+        public IEnumerable<Espacio> GetByFilter(Espacio espacio)
+        {
+            return _espacioRepository.GetByFilter(espacio);
+        }
+
+        public Espacio Insert(Espacio espacio)
+        {
+            espacio.IdEspacio = _espacioRepository.Insert(espacio);
+            return espacio;
         }
 
         // inserta espacios y retorna los ids
-        public static List<Espacio> InsertEspacios(List<Espacio> espacios)
+        public IEnumerable<Espacio> InsertList(List<Espacio> espacios)
         {
             var CodigoBS = new CodigoBusiness();
-            var EspacioDA = new EspacioDataAccess();
 
-            List<Espacio> espaciosNew = new List<Espacio>();
+            IList<Espacio> espaciosNew = new List<Espacio>();
 
             // get idCategoria => Radio censal
             int? idCategoria = CodigoBS.GetCodigoByClave(new Codigo() { Grupo = "CategoriaEspacio", Clave = "RadioCensal" }).IdCodigo;
@@ -159,8 +158,8 @@ namespace BusinessLayer
             foreach (Espacio espacio in espacios)
             {
                 espacio.IdCategoria = idCategoria;
-                espacio.IdPadre = GetEspacioByCodigo(new Espacio() { Codigo = zonas[espacio.Codigo] }).IdEspacio;
-                espaciosNew.Add(EspacioDA.Insert(espacio));
+                espacio.IdPadre = GetByCodigo(new Espacio() { Codigo = zonas[espacio.Codigo] }).IdEspacio;
+                espaciosNew.Add(Insert(espacio));
             }
 
             return espaciosNew;

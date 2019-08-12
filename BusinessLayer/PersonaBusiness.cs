@@ -37,7 +37,6 @@ namespace BusinessLayer
         {
             int count = 0;
 
-            // Obtengo la hoja de excel
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
@@ -57,7 +56,8 @@ namespace BusinessLayer
                 int lat_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud")).Start.Column;
                 int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
 
-                // Recorro las filas del excel
+                LugarBusiness lugarBusiness = new LugarBusiness();
+
                 for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
                 {
                     // Id SocioEconómico
@@ -74,7 +74,7 @@ namespace BusinessLayer
                         Clave = excelWorksheet.Cells[i, sexo_j].Value.GetString()
                     };
 
-                    sexo = (Codigo)_cache.GetObject($"codigo_Sexo;{nivelSocioEcon.Clave}");
+                    sexo = (Codigo)_cache.GetObject($"codigo_Sexo;{sexo.Clave}");
 
                     // Id NivelEducativo
                     Codigo nivelEducativo = new Codigo()
@@ -108,13 +108,13 @@ namespace BusinessLayer
 
                     estacion = (Codigo)_cache.GetObject($"codigo_Estacion;{estacion.Clave}");
 
-                    // Id Estadion
+                    // Id Zona
                     Codigo zona = new Codigo()
                     {
                         Clave = excelWorksheet.Cells[i, zona_j].Value.GetString()
                     };
 
-                    estacion = (Codigo)_cache.GetObject($"espacio_{estacion.Clave}");
+                    zona = (Codigo)_cache.GetObject($"espacio_{zona.Clave}");
 
                     // Id Lugar
                     Lugar lugar = new Lugar()
@@ -130,10 +130,19 @@ namespace BusinessLayer
                     {
                         lugar.Calle = excelWorksheet.Cells[i, calle_j].Value.GetString();
                         lugar.Numero = excelWorksheet.Cells[i, nroPostal_j].Value.GetString();
+                        lugar.IdZona = zona.IdCodigo;
+                        lugar.IdTipoZonaResidencial = zonaResidencial.IdCodigo;
+
+                        lugar = lugarBusiness.Insert(lugar);
+
+                        _cache.SetObject($"lugar_{lugar.Latitud};{lugar.Longitud}", lugar);
+                    }
+                    else
+                    {
+                        lugar = lugarCache;
                     }
 
                     // Persona
-
                     Persona persona = new Persona()
                     {
                         Nombre = excelWorksheet.Cells[i, nombre_j].Value.GetString(),
@@ -141,8 +150,8 @@ namespace BusinessLayer
                         IdLugar = lugar.IdLugar,
                         IdSocioEconomico = nivelSocioEcon.IdCodigo,
                         IdSexo = sexo.IdCodigo,
+                        IdNivelEducativo = nivelEducativo.IdCodigo,
                         IdOcupacion = ocupacion.IdCodigo,
-                        IdTipoZonaResidencial = zonaResidencial.IdCodigo,
                         IdEstacion = estacion.IdCodigo
                     };
 

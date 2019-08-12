@@ -37,7 +37,7 @@ namespace BusinessLayer
         public int InsertByExcel(FileInfo file)
         {
             int count = 0;
-            // Obtengo la hoja de excel
+
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];

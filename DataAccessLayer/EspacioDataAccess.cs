@@ -1,20 +1,23 @@
-﻿using Domain;
+﻿using DataAccessLayer.Interfaces;
+using Domain;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Utils.Helpers;
 
 namespace DataAccessLayer
 {
-    public class EspacioDataAccess : DataAccess
+    public class EspacioDataAccess : DataAccess, IEspacioRepository
     {
         public EspacioDataAccess() : base() { }
 
-        public Espacio Insert(Espacio espacio)
+        public int Insert(Espacio espacio)
         {
             SqlConnection oConn = new SqlConnection(connectionString);
             oConn.Open();
             SqlTransaction oTran = oConn.BeginTransaction();
+            int id;
 
             try
             {
@@ -26,19 +29,13 @@ namespace DataAccessLayer
                     oComm.CommandType = CommandType.StoredProcedure;
                     oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
-                    oComm.Parameters.Add(new SqlParameter("@IdEspacio", SqlDbType.Int, 0, ParameterDirection.InputOutput, false, 0, 0, null, DataRowVersion.Original, espacio.IdEspacio));
                     oComm.Parameters.Add(new SqlParameter("@IdCategoria", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.IdCategoria));
                     oComm.Parameters.Add(new SqlParameter("@Descripcion", SqlDbType.VarChar, 200, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.Descripcion));
                     oComm.Parameters.Add(new SqlParameter("@Coordenadas", SqlDbType.VarChar, -1, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, espacio.Coordenadas));
                     oComm.Parameters.Add(new SqlParameter("@IdPadre", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, espacio.IdPadre));
                     oComm.Parameters.Add(new SqlParameter("@Codigo", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.Codigo));
 
-                    int rowsAffected = oComm.ExecuteNonQuery();
-
-                    if (rowsAffected == 0)
-                    {
-                        throw new Exception("No se insertó ningún registro. Por favor, reintente la operación.");
-                    }
+                    id = (int)oComm.ExecuteScalar();
 
                     espacio.IdEspacio = (int)oComm.Parameters["@IdEspacio"].Value;
 
@@ -56,10 +53,10 @@ namespace DataAccessLayer
                 oTran.Dispose();
             }
 
-            return espacio;
+            return id;
         }
 
-        public DataSet GetByCodigo(Espacio espacio)
+        public Espacio GetByCodigo(Espacio espacio)
         {
             // Creo la conexión y la transacción
             SqlConnection oConn = new SqlConnection(connectionString);
@@ -76,7 +73,7 @@ namespace DataAccessLayer
                         oComm.Connection = oConn;
 
                         oComm.CommandType = CommandType.StoredProcedure;
-                        oComm.CommandText = "Espacio_GetByCodigo";
+                        oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
                         oComm.Parameters.Add(new SqlParameter("@Codigo", SqlDbType.VarChar, 50, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.Codigo));
 
@@ -94,10 +91,14 @@ namespace DataAccessLayer
                 oConn.Close();
             }
 
-            return ds;
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateItemFromRow<Espacio>(ds.Tables[0].Rows[0]);
+            }
+            return null;
         }
 
-        public DataSet GetByFilter(Espacio espacio)
+        public IEnumerable<Espacio> GetByFilter(Espacio espacio)
         {
             // Creo la conexión y la transacción
             SqlConnection oConn = new SqlConnection(connectionString);
@@ -114,7 +115,7 @@ namespace DataAccessLayer
                         oComm.Connection = oConn;
 
                         oComm.CommandType = CommandType.StoredProcedure;
-                        oComm.CommandText = "Espacio_GetByFilter";
+                        oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
                         oComm.Parameters.Add(new SqlParameter("@IdCategoria", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.IdCategoria));
                         oComm.Parameters.Add(new SqlParameter("@Descripcion", SqlDbType.VarChar, 200, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.Descripcion));
@@ -135,7 +136,11 @@ namespace DataAccessLayer
                 oConn.Close();
             }
 
-            return ds;
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateListFromTable<Espacio>(ds.Tables[0]);
+            }
+            return null;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain;
+using System.Collections.Generic;
 
 namespace DataAccessLayer.Interfaces
 {
@@ -6,5 +7,6 @@ namespace DataAccessLayer.Interfaces
     {
         int Insert(Espacio espacio);
         Espacio GetByCodigo(Espacio espacio);
+        IEnumerable<Espacio> GetByFilter(Espacio espacio);
     }
 }

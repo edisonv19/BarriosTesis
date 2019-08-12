@@ -11,7 +11,6 @@ GO
 -- =================================================
 
 CREATE PROCEDURE [dbo].[Espacio_Insert]
-	@IdEspacio 		INT = NULL OUTPUT,
 	@IdCategoria 	INT,
 	@Descripcion 	NVARCHAR(200) = NULL,
 	@Coordenadas	NVARCHAR(MAX) = NULL,
@@ -20,17 +19,11 @@ CREATE PROCEDURE [dbo].[Espacio_Insert]
 AS
 BEGIN
 	INSERT INTO [Espacio] (
-		[Nombre],
-		[Edad],
-		[TieneHijos],
-		
-		[IdEstadoCivil],
-		[IdSexo],
-		[IdSocioEconomico],
-		[IdNivelEducativo],
-		[IdOcupacion],
-		[IdZonaResidencial],
-		[IdLugar]	,
+		[IdCategoria],
+		[Descripcion],
+		[Coordenadas],
+		[IdPadre],
+		[Codigo]
 	)
 	VALUES (
 			@IdCategoria,
@@ -40,9 +33,7 @@ BEGIN
 			@Codigo
 	)
 
-	SELECT	@IdEspacio = [IdEspacio]
-	FROM 	[Espacio]
-	WHERE 	[IdEspacio] = IDENT_CURRENT('Espacio')
+	SELECT	IDENT_CURRENT('Espacio');
 
 END
 GO

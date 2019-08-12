@@ -14,32 +14,27 @@ namespace BusinessLayer.Caches
             _cache = new Dictionary<string, T>();
         }
 
-        private T GetOfCache(string key)
-        {
-            return _cache[key];
-        }
-
-        private void SetToCache(string key, T o)
+        public void SetObject(string key, T o)
         {
             _cache.Add(key, o);
         }
 
         public T GetObject(string key)
         {
-            if (GetOfCache(key) == null)
+            if (_cache[key] == null)
             {
                 T data = _dataFactory.GetData(key);
 
                 if (data != null)
                 {
-                    SetToCache(key, data);
+                    SetObject(key, data);
                 }
 
                 return data;
             }
             else
             {
-                return GetOfCache(key);
+                return _cache[key];
             }
         }
     }
