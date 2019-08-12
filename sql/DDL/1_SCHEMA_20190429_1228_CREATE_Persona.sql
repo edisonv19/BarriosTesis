@@ -16,7 +16,7 @@ BEGIN
 		[IdSexo]			INT NOT NULL,
 		[IdNivelEducativo]	INT NOT NULL,
 		[IdOcupacion]			INT NOT NULL,
-		[IdTipoZonaResidencial]		INT NOT NULL,
+		
 		[IdEstacion]		INT NULL
 	);
 
@@ -43,10 +43,6 @@ BEGIN
 	ALTER TABLE Persona
 	ADD CONSTRAINT FK_Persona_Codigo_IdOcupacion
 	FOREIGN KEY (IdOcupacion) REFERENCES [Codigo](IdCodigo);
-	
-	ALTER TABLE Persona
-	ADD CONSTRAINT FK_Persona_Codigo_IdTipoZonaResidencial
-	FOREIGN KEY (IdTipoZonaResidencial) REFERENCES [Codigo](IdCodigo);
 
 	ALTER TABLE Persona
 	ADD CONSTRAINT FK_Persona_Codigo_IdEstacion

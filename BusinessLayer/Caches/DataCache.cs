@@ -29,7 +29,11 @@ namespace BusinessLayer.Caches
             if (GetOfCache(key) == null)
             {
                 T data = _dataFactory.GetData(key);
-                SetToCache(key, data);
+
+                if (data != null)
+                {
+                    SetToCache(key, data);
+                }
 
                 return data;
             }

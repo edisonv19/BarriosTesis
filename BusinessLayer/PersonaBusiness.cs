@@ -43,30 +43,23 @@ namespace BusinessLayer
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
 
                 // Get column Index
-                int lat_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud")).Start.Column;
-                int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
+                int zona_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Zona")).Start.Column;
+                int calle_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Calle")).Start.Column;
+                int nroPostal_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("NroPostal")).Start.Column;
+                int nombre_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Nombre")).Start.Column;
                 int ingreso_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Ingreso")).Start.Column;
                 int sexo_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Sexo")).Start.Column;
+                int edad_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Edad")).Start.Column;
                 int estudios_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Estudios")).Start.Column;
                 int ocupacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Ocupación")).Start.Column;
                 int zonaResid_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Tipo de zona de residencia")).Start.Column;
                 int estacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Estación")).Start.Column;
-
-                int nombre_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Nombre")).Start.Column;
-                int edad_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Edad")).Start.Column;
+                int lat_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud")).Start.Column;
+                int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
 
                 // Recorro las filas del excel
                 for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
                 {
-                    // Get Lugar
-                    Lugar lugar = new Lugar()
-                    {
-                        Latitud = excelWorksheet.Cells[i, lat_j].Value.GetDouble(),
-                        Longitud = excelWorksheet.Cells[i, lgn_j].Value.GetDouble()
-                    };
-
-                    lugar = (Lugar)_cache.GetObject($"lugar_{lugar.Latitud};{lugar.Longitud}");
-
                     // Id SocioEconómico
                     Codigo nivelSocioEcon = new Codigo()
                     {
@@ -114,6 +107,30 @@ namespace BusinessLayer
                     };
 
                     estacion = (Codigo)_cache.GetObject($"codigo_Estacion;{estacion.Clave}");
+
+                    // Id Estadion
+                    Codigo zona = new Codigo()
+                    {
+                        Clave = excelWorksheet.Cells[i, zona_j].Value.GetString()
+                    };
+
+                    estacion = (Codigo)_cache.GetObject($"espacio_{estacion.Clave}");
+
+                    // Id Lugar
+                    Lugar lugar = new Lugar()
+                    {
+                        Latitud = excelWorksheet.Cells[i, lat_j].Value.GetDouble(),
+                        Longitud = excelWorksheet.Cells[i, lgn_j].Value.GetDouble()
+                    };
+
+                    var lugarCache = (Lugar)_cache.GetObject($"lugar_{lugar.Latitud};{lugar.Longitud}");
+
+                    // Not exists en db => insert
+                    if (lugarCache == null)
+                    {
+                        lugar.Calle = excelWorksheet.Cells[i, calle_j].Value.GetString();
+                        lugar.Numero = excelWorksheet.Cells[i, nroPostal_j].Value.GetString();
+                    }
 
                     // Persona
 

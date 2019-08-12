@@ -17,7 +17,8 @@ BEGIN
 		[IdZona]		INT NOT NULL,
 		[IdCategoria]	INT NULL,
 		[Descripcion]	NVARCHAR(200) NULL,
-		[Radio]			INT NULL
+		[Radio]			INT NULL,
+		[IdTipoZonaResidencial]		INT NULL
 	);
 
 	ALTER TABLE Lugar
@@ -34,4 +35,8 @@ BEGIN
 	ALTER TABLE Lugar
 	ADD CONSTRAINT FK_Lugar_Codigo_IdCategoria
 	FOREIGN KEY (IdCategoria) REFERENCES [Codigo](IdCodigo);
+	
+	ALTER TABLE Lugar
+	ADD CONSTRAINT FK_Lugar_Codigo_IdTipoZonaResidencial
+	FOREIGN KEY (IdTipoZonaResidencial) REFERENCES [Codigo](IdCodigo);
 END;
