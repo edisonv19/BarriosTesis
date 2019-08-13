@@ -55,6 +55,7 @@ namespace BusinessLayer
                 int estacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Estación")).Start.Column;
                 int lat_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud")).Start.Column;
                 int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
+                int identificacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Identificacion_OLD")).Start.Column;
 
                 LugarBusiness lugarBusiness = new LugarBusiness();
 
@@ -152,7 +153,8 @@ namespace BusinessLayer
                         IdSexo = sexo.IdCodigo,
                         IdNivelEducativo = nivelEducativo.IdCodigo,
                         IdOcupacion = ocupacion.IdCodigo,
-                        IdEstacion = estacion.IdCodigo
+                        IdEstacion = estacion.IdCodigo,
+                        Identificacion = excelWorksheet.Cells[i, identificacion_j].Value.GetString()
                     };
 
                     persona = Insert(persona);

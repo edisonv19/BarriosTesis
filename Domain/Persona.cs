@@ -13,5 +13,6 @@ namespace Domain
         public int? IdNivelEducativo { get; set; }
         public int? IdOcupacion { get; set; }
         public int? IdEstacion { get; set; }
+        public string Identificacion { get; set; }
     }
 }

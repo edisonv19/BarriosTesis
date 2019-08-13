@@ -18,8 +18,8 @@ CREATE PROCEDURE [dbo].[Persona_Insert]
 	@IdSexo		INT,
 	@IdNivelEducativo	INT,
 	@IdOcupacion	INT,
-	@IdTipoZonaResidencial	INT,
-	@IdEstacion	INT = NULL
+	@IdEstacion	INT = NULL,
+	@Identificacion VARCHAR(100)
 AS
 BEGIN
 	INSERT INTO [dbo].[Persona](
@@ -30,8 +30,8 @@ BEGIN
 		,[IdSexo]
 		,[IdNivelEducativo]
 		,[IdOcupacion]
-		,[IdTipoZonaResidencial]
 		,[IdEstacion]
+		,[Identificacion]
 	)
     VALUES(
 		@Nombre
@@ -41,8 +41,8 @@ BEGIN
 		,@IdSexo
 		,@IdNivelEducativo
 		,@IdOcupacion
-		,@IdTipoZonaResidencial
 		,@IdEstacion
+		,@Identificacion
 	)
 
 	SELECT IDENT_CURRENT('Persona');
