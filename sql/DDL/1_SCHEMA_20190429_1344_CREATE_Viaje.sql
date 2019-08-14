@@ -11,17 +11,17 @@ BEGIN
 		
 		[IdPersona]		INT NOT NULL,
 		[Fecha]			DATETIME NULL,
-		[IdOrigen]		INT	NOT NULL,
-		[IdTipoLugarOrigen]	INT NOT NULL,
-		[IdDestino]		INT NOT NULL,
-		[IdTipoLugarDestino]	INT NOT NULL,
+		[IdOrigen]		INT NULL,
+		[IdTipoLugarOrigen]	INT NULL,
+		[IdDestino]		INT NULL,
+		[IdTipoLugarDestino]	INT NULL,
 		
-		[IdMotivo]		INT NOT NULL,
-		[HoraInicio]	TIME NOT NULL,
-		[HoraFin]		TIME NOT NULL,
+		[IdMotivo]		INT NULL,
+		[HoraInicio]	TIME NULL,
+		[HoraFin]		TIME NULL,
 		
-		[IdTransporte]	INT NOT NULL,
-		[Observaciones]	NVARCHAR(200) NOT NULL
+		[IdTransporte]	INT NULL,
+		[Observaciones]	NVARCHAR(200) NULL
 	);
 
 	ALTER TABLE Viaje

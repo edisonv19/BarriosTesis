@@ -43,85 +43,156 @@ namespace BusinessLayer
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
 
                 // Get column Index
-                int lat_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud")).Start.Column;
-                int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
-                int ingreso_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Ingreso")).Start.Column;
-                int sexo_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Sexo")).Start.Column;
-                int estudios_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Estudios")).Start.Column;
-                int ocupacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Ocupación")).Start.Column;
-                int zonaResid_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Tipo de zona de residencia")).Start.Column;
-                int estacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Estación")).Start.Column;
+                int identificacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Identificación")).Start.Column;
+                int fecha_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Fecha")).Start.Column;
 
-                int nombre_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Nombre")).Start.Column;
-                int edad_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Edad")).Start.Column;
+                int calle_o_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Calle_Origen")).Start.Column;
+                int num_o_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Num_Origen")).Start.Column;
+                int lat_o_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud_origen")).Start.Column;
+                int lng_o_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud_origen")).Start.Column;
+                int zona_o_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Zona_Origen")).Start.Column;
+                int tLugar_o_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Tlugar_Origen")).Start.Column;
+
+                int calle_d_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Calle_Destino")).Start.Column;
+                int num_d_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Num_Destino")).Start.Column;
+                int lat_d_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud_destino")).Start.Column;
+                int lng_d_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud_destino")).Start.Column;
+                int zona_d_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Zona_Destino")).Start.Column;
+                int tLugar_d_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Tlugar_Destino")).Start.Column;
+
+                int motivoViaje_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("MotivoViaje")).Start.Column;
+                int horaInicio_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("HoraInicio")).Start.Column;
+                int horaFin_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("HoraFin")).Start.Column;
+                int transporte_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Transporte")).Start.Column;
+                int observaciones_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Observaciones")).Start.Column;
+
+                LugarBusiness lugarBusiness = new LugarBusiness();
 
                 // Recorro las filas del excel
                 for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
                 {
                     // Get Lugar
-                    Lugar lugar = new Lugar()
+                    Persona persona = new Persona()
                     {
-                        Latitud = excelWorksheet.Cells[i, lat_j].Value.GetDouble(),
-                        Longitud = excelWorksheet.Cells[i, lgn_j].Value.GetDouble()
+                        Identificacion = excelWorksheet.Cells[i, identificacion_j].Value.GetString()
                     };
 
-                    lugar = (Lugar)_cache.GetObject($"latlng_{lugar.Latitud};{lugar.Longitud}");
+                    var persona_cache = (Persona)_cache.GetObject($"persona_{persona.Identificacion}");
 
-                    // Id SocioEconómico
-                    Codigo nivelSocioEcon = new Codigo()
+                    // Id Lugar Origen
+                    Lugar lugar_o = new Lugar()
                     {
-                        Clave = excelWorksheet.Cells[i, ingreso_j].Value.GetString()
+                        Latitud = excelWorksheet.Cells[i, lat_o_j].Value.GetDouble(),
+                        Longitud = excelWorksheet.Cells[i, lng_o_j].Value.GetDouble()
                     };
 
-                    nivelSocioEcon = (Codigo)_cache.GetObject($"ingreso_{nivelSocioEcon.Clave}");
+                    var lugar_o_cache = (Lugar)_cache.GetObject($"lugar_{lugar_o.Latitud};{lugar_o.Longitud}");
 
-                    // Id Sexo
-                    Codigo sexo = new Codigo()
+                    // Id Zona origen
+                    Codigo zona_o = new Codigo()
                     {
-                        Clave = excelWorksheet.Cells[i, sexo_j].Value.GetString()
+                        Clave = excelWorksheet.Cells[i, zona_o_j].Value.GetString()
                     };
 
-                    sexo = (Codigo)_cache.GetObject($"sexo_{nivelSocioEcon.Clave}");
+                    zona_o = (Codigo)_cache.GetObject($"espacio_{zona_o.Clave}");
 
-                    // Id NivelEducativo
-                    Codigo nivelEducativo = new Codigo()
+                    // Not exists en db => insert
+                    if (lugar_o_cache == null)
                     {
-                        Clave = excelWorksheet.Cells[i, estudios_j].Value.GetString()
+                        lugar_o.Calle = excelWorksheet.Cells[i, calle_o_j].Value.GetString();
+                        lugar_o.Numero = excelWorksheet.Cells[i, num_o_j].Value.GetString();
+                        lugar_o.IdZona = zona_o.IdCodigo;
+
+                        lugar_o = lugarBusiness.Insert(lugar_o);
+
+                        _cache.SetObject($"lugar_{lugar_o.Latitud};{lugar_o.Longitud}", lugar_o);
+                    }
+                    else
+                    {
+                        lugar_o = lugar_o_cache;
+                    }
+
+                    // Id Lugar Destino
+                    Lugar lugar_d = new Lugar()
+                    {
+                        Latitud = excelWorksheet.Cells[i, lat_d_j].Value.GetDouble(),
+                        Longitud = excelWorksheet.Cells[i, lng_d_j].Value.GetDouble()
                     };
 
-                    nivelEducativo = (Codigo)_cache.GetObject($"estudio_{nivelEducativo.Clave}");
+                    var lugar_d_cache = (Lugar)_cache.GetObject($"lugar_{lugar_d.Latitud};{lugar_d.Longitud}");
 
-                    // Id Ocupacion
-                    Codigo ocupacion = new Codigo()
+                    // Id Zona destino
+                    Codigo zona_d = new Codigo()
                     {
-                        Clave = excelWorksheet.Cells[i, ocupacion_j].Value.GetString()
+                        Clave = excelWorksheet.Cells[i, zona_d_j].Value.GetString()
                     };
 
-                    ocupacion = (Codigo)_cache.GetObject($"ocupacion_{ocupacion.Clave}");
+                    zona_d = (Codigo)_cache.GetObject($"espacio_{zona_d.Clave}");
 
-                    // Id Zona Residencial
-                    Codigo zonaResidencial = new Codigo()
+                    // Not exists en db => insert
+                    if (lugar_d_cache == null)
                     {
-                        Clave = excelWorksheet.Cells[i, zonaResid_j].Value.GetString()
+                        lugar_d.Calle = excelWorksheet.Cells[i, calle_d_j].Value.GetString();
+                        lugar_d.Numero = excelWorksheet.Cells[i, num_d_j].Value.GetString();
+                        lugar_d.IdZona = zona_d.IdCodigo;
+
+                        lugar_d = lugarBusiness.Insert(lugar_d);
+
+                        _cache.SetObject($"lugar_{lugar_d.Latitud};{lugar_d.Longitud}", lugar_d);
+                    }
+                    else
+                    {
+                        lugar_d = lugar_d_cache;
+                    }
+
+                    // Id TipoLugarOrigen
+                    Codigo tipoLugar_o = new Codigo()
+                    {
+                        Clave = excelWorksheet.Cells[i, tLugar_o_j].Value.GetString()
                     };
 
-                    // Id Estadion
-                    Codigo estacion = new Codigo()
+                    tipoLugar_o = (Codigo)_cache.GetObject($"codigo_TipoLugar;{tipoLugar_o.Clave}");
+
+                    // Id TipoLugarDestino
+                    Codigo tipoLugar_d = new Codigo()
                     {
-                        Clave = excelWorksheet.Cells[i, estacion_j].Value.GetString()
+                        Clave = excelWorksheet.Cells[i, tLugar_d_j].Value.GetString()
                     };
 
-                    estacion = (Codigo)_cache.GetObject($"estacion_{estacion.Clave}");
+                    tipoLugar_d = (Codigo)_cache.GetObject($"codigo_TipoLugar;{tipoLugar_d.Clave}");
 
-                    // Persona
+                    // Id motivo
+                    Codigo motivo = new Codigo()
+                    {
+                        Clave = excelWorksheet.Cells[i, motivoViaje_j].Value.GetString()
+                    };
 
+                    motivo = (Codigo)_cache.GetObject($"codigo_MotivoViaje;{motivo.Clave}");
+
+                    // Id transporte
+                    Codigo transporte = new Codigo()
+                    {
+                        Clave = excelWorksheet.Cells[i, transporte_j].Value.GetString()
+                    };
+
+                    transporte = (Codigo)_cache.GetObject($"codigo_TipoTransporte;{transporte.Clave}");
+
+                    // Viaje
                     Viaje viaje = new Viaje()
                     {
-                        
+                        IdPersona = persona.IdPersona,
+                        IdOrigen = lugar_o.IdLugar,
+                        IdTipoLugarOrigen = tipoLugar_o.IdCodigo,
+                        IdDestino = lugar_d.IdLugar,
+                        IdTipoLugarDestino = tipoLugar_d.IdCodigo,
+                        IdMotivo = motivo.IdCodigo,
+                        HoraInicio = excelWorksheet.Cells[i, horaInicio_j].Value.GetTimeSpan(),
+                        HoraFin = excelWorksheet.Cells[i, horaFin_j].Value.GetTimeSpan(),
+                        IdTransporte = transporte.IdCodigo,
+                        Observaciones = excelWorksheet.Cells[i, observaciones_j].Value.GetString()
                     };
 
                     viaje = Insert(viaje);
-
                     count = viaje.IdViaje == null ? count : count++;
                 }
             }

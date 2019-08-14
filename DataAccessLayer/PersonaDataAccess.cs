@@ -55,9 +55,46 @@ namespace DataAccessLayer
             return id;
         }
 
-        public Persona GetByCodigo(Persona persona)
+        public Persona GetByIdentificacion(Persona persona)
         {
-            throw new NotImplementedException();
+            // Creo la conexión y la transacción
+            SqlConnection oConn = new SqlConnection(connectionString);
+            oConn.Open();
+
+            DataSet ds = new DataSet();
+
+            try
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                {
+                    using (SqlCommand oComm = new SqlCommand())
+                    {
+                        oComm.Connection = oConn;
+
+                        oComm.CommandType = CommandType.StoredProcedure;
+                        oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
+
+                        oComm.Parameters.Add(new SqlParameter("@Identificacion", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Identificacion));
+
+                        adapter.SelectCommand = oComm;
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                oConn.Close();
+            }
+
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateItemFromRow<Persona>(ds.Tables[0].Rows[0]);
+            }
+            return null;
         }
     }
 }
