@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using BusinessLayer;
+using BusinessLayer.Interfaces;
+using Domain;
+using Newtonsoft.Json;
 using OfficeOpenXml;
-using ReadBarrios.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,13 +12,15 @@ namespace ReadBarrios.Generators
 {
     public class ZonaGenerator
     {
-        public string PathIn { get; private set; }
-        public string PathOut { get; private set; }
+        private readonly string _pathIn;
+        private readonly string _pathOut;
+        private readonly IEspacioBusiness _espacioBusiness;
 
-        public ZonaGenerator(string pathIn, string pathOut)
+        public ZonaGenerator(IEspacioBusiness espacioBusiness ,string pathIn, string pathOut)
         {
-            this.PathIn = pathIn;
-            this.PathOut = pathOut;
+            _espacioBusiness = espacioBusiness;
+            _pathIn = pathIn;
+            _pathOut = pathOut;
         }
 
         /// <summary>
@@ -29,7 +33,7 @@ namespace ReadBarrios.Generators
             List<Espacio> polygons = GetPolygons();
 
             // Obtengo la hoja de excel
-            using (ExcelPackage package = GetPackage(this.PathIn))
+            using (ExcelPackage package = GetPackage(_pathIn))
             {
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
 
@@ -49,7 +53,7 @@ namespace ReadBarrios.Generators
                     excelWorksheet.Cells[i, zona_d_j].Value = GetZona(excelWorksheet, i, lat_d_j, lgn_d_j, polygons);
                 }
 
-                package.SaveAs(new FileInfo(this.PathOut));
+                package.SaveAs(new FileInfo(_pathOut));
             }
         }
 
@@ -59,7 +63,7 @@ namespace ReadBarrios.Generators
             List<Espacio> polygons = GetPolygons();
 
             // Obtengo la hoja de excel
-            using (ExcelPackage package = GetPackage(this.PathIn))
+            using (ExcelPackage package = GetPackage(_pathIn))
             {
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
 
@@ -74,7 +78,7 @@ namespace ReadBarrios.Generators
                     excelWorksheet.Cells[i, zona_o_j].Value = GetZona(excelWorksheet, i, lat_o_j, lgn_o_j, polygons);
                 }
 
-                package.SaveAs(new FileInfo(this.PathOut));
+                package.SaveAs(new FileInfo(_pathOut));
             }
         }
 
@@ -82,10 +86,10 @@ namespace ReadBarrios.Generators
         private List<Espacio> GetPolygons()
         {
             // Busco los RRCC
-            List<Espacio> espacios = Business.GetEspacioByFilter(new Espacio() { IdCategoria = 110 });
+            IEnumerable<Espacio> espacios = _espacioBusiness.GetByFilter(new Espacio() { IdCategoria = 110 });
 
-            // Cargo las coordenadas en List<Coordinate>
-            return espacios.Select(x => { x.coordinates2 = JsonConvert.DeserializeObject<List<Coordinate>>(x.Coordenadas); return x; }).ToList();
+            // Cargo las coordenadas en List<Coordenada>
+            return espacios.Select(x => { x.Coordenadas = JsonConvert.DeserializeObject<List<Coordenada>>(x.CoordenadasStr); return x; }).ToList();
         }
 
         // Obtiene el Worksheets
@@ -118,8 +122,8 @@ namespace ReadBarrios.Generators
 
             if (lat_data.HasValue && lgn_data.HasValue)
             {
-                Espacio rrcc = polygons.Find(polygon => (polygon.contains(new Coordinate(lat_data.Value, lgn_data.Value))));
-                return Business.zonas[rrcc == null ? "-1" : rrcc.Codigo];
+                Espacio rrcc = polygons.Find(polygon => (polygon.contains(new Coordenada(lat_data.Value, lgn_data.Value))));
+                return EspacioBusiness.zonas[rrcc == null ? "-1" : rrcc.Codigo];
             }
 
             return null;

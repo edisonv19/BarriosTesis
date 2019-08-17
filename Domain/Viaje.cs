@@ -8,6 +8,7 @@ namespace Domain
         public int? IdPersona { get; set; }
 
         public DateTime? Fecha { get; set; }
+        public string FechaStr { get; set; }
         public int? IdOrigen { get; set; }
         public int? IdTipoLugarOrigen { get; set; }
         public int? IdDestino { get; set; }

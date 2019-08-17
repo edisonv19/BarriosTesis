@@ -1,11 +1,12 @@
-﻿using DataAccessLayer;
+﻿using BusinessLayer.Interfaces;
+using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
 using System.Collections.Generic;
 
 namespace BusinessLayer
 {
-    public class EspacioBusiness
+    public class EspacioBusiness : IEspacioBusiness
     {
         // Repositories
         private IEspacioRepository _espacioRepository;

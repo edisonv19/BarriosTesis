@@ -34,5 +34,10 @@ namespace Utils.Helpers
         {
             return TimeSpan.TryParse(value.ToString(), out TimeSpan lat_o) ? (TimeSpan?)lat_o : null;
         }
+
+        public static DateTime? GetDateTime(this object value)
+        {
+            return DateTime.TryParse(value.ToString(), out DateTime lat_o) ? (DateTime?)lat_o : null;
+        }
     }
 }

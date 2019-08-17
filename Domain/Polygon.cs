@@ -1,13 +1,12 @@
-﻿using ReadBarrios.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ReadBarrios.Area
+namespace Domain
 {
     public class Polygon
     {
-        public List<Coordinate> coordinates { get; set; }
+        public List<Coordenada> coordinates { get; set; }
 
-        public bool contains(Coordinate location)
+        public bool contains(Coordenada location)
         {
             bool contains = false;
             for (int i = 0, j = this.coordinates.Count - 1; i < this.coordinates.Count; j = i++)

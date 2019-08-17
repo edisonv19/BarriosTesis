@@ -1,28 +1,29 @@
-﻿using Newtonsoft.Json;
-using ReadBarrios.Models;
-using System;
+﻿using BusinessLayer.Interfaces;
+using Domain;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace ReadBarrios.Generators
 {
     public class SpaceGenerator
     {
-        public string PathIn { get; private set; }
+        private readonly string _pathIn;
+        private readonly IEspacioBusiness _espaciosBusiness;
 
-        public SpaceGenerator(string pathIn)
+        public SpaceGenerator(IEspacioBusiness espacioBusiness, string pathIn)
         {
-            this.PathIn = pathIn;
+            _espaciosBusiness = espacioBusiness;
+            _pathIn = pathIn;
         }
 
 
         public void Generate()
         {
             // Read the file
-            XDocument doc = XDocument.Load(this.PathIn);
+            XDocument doc = XDocument.Load(_pathIn);
 
             // Get placemarks
             List<XElement> placemarks = doc.Descendants().Where(x => x.Name.LocalName == "Placemark").ToList();
@@ -31,7 +32,7 @@ namespace ReadBarrios.Generators
             List<Espacio> espacios = this.GetRRCC(placemarks);
 
             // Inserto los espacios
-            Business.InsertEspacios(espacios);
+            _espaciosBusiness.InsertList(espacios);
         }
 
         private List<Espacio> GetRRCC(List<XElement> placemarks)
@@ -44,8 +45,8 @@ namespace ReadBarrios.Generators
                 Espacio espacio = new Espacio();
                 espacio.Codigo = GetValueByLocalName(x, "name").Replace("\n", string.Empty); ;
                 espacio.Descripcion = espacio.Codigo;
-                espacio.coordinates = GetCoordinadas(GetValueByLocalName(x, "coordinates"));
-                espacio.Coordenadas = JsonConvert.SerializeObject(espacio.coordinates);
+                espacio.Coordenadas = GetCoordinadas(GetValueByLocalName(x, "Coordenadas"));
+                espacio.CoordenadasStr = JsonConvert.SerializeObject(espacio.CoordenadasStr);
 
                 rrcc.Add(espacio);
             }
@@ -60,25 +61,25 @@ namespace ReadBarrios.Generators
             return elements.Where(y => y.Name.LocalName == localName).Select(i => i.Value).LastOrDefault();
         }
 
-        private List<Coordinate> GetCoordinadas(string coordinatesStr)
+        private List<Coordenada> GetCoordinadas(string CoordenadasStr)
         {
-            List<Coordinate> coordenadas = new List<Coordinate>();
+            List<Coordenada> coordenadas = new List<Coordenada>();
 
             // Saco los saltos de linea
-            coordinatesStr = coordinatesStr.Replace("\n", string.Empty);
+            CoordenadasStr = CoordenadasStr.Replace("\n", string.Empty);
             // Saco los espacios en blanco
-            coordinatesStr = coordinatesStr.Replace("              ", ";");
+            CoordenadasStr = CoordenadasStr.Replace("              ", ";");
             // Elimino los espacios sobrantes
-            coordinatesStr = coordinatesStr.Replace(" ", string.Empty);
+            CoordenadasStr = CoordenadasStr.Replace(" ", string.Empty);
             // elimino el primer delimitador ";"
-            coordinatesStr = coordinatesStr.Remove(0, 1);
+            CoordenadasStr = CoordenadasStr.Remove(0, 1);
             // guardo los caracteres en un arreglo
-            string[] coordinatesArray = coordinatesStr.Split(';');
+            string[] CoordenadasArray = CoordenadasStr.Split(';');
 
-            foreach (string coor in coordinatesArray)
+            foreach (string coor in CoordenadasArray)
             {
                 string[] coordenadaPart = coor.Split(",");
-                Coordinate coordenada = new Coordinate(double.Parse(coordenadaPart[1], CultureInfo.InvariantCulture), double.Parse(coordenadaPart[0], CultureInfo.InvariantCulture));
+                Coordenada coordenada = new Coordenada(double.Parse(coordenadaPart[1], CultureInfo.InvariantCulture), double.Parse(coordenadaPart[0], CultureInfo.InvariantCulture));
                 coordenadas.Add(coordenada);
             }
 

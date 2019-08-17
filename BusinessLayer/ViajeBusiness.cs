@@ -181,6 +181,7 @@ namespace BusinessLayer
                     Viaje viaje = new Viaje()
                     {
                         IdPersona = persona.IdPersona,
+                        FechaStr = excelWorksheet.Cells[i, fecha_j].Value.GetString(),
                         IdOrigen = lugar_o.IdLugar,
                         IdTipoLugarOrigen = tipoLugar_o.IdCodigo,
                         IdDestino = lugar_d.IdLugar,

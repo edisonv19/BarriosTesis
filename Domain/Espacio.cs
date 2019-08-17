@@ -7,20 +7,20 @@ namespace Domain
     {
         public int? IdEspacio { get; set; }
         public string name { get; set; }
-        public string Coordenadas { get; set; }
+        public string CoordenadasStr { get; set; }
         public int? IdCategoria { get; set; }
         public string Descripcion { get; set; }
         public int? IdPadre { get; set; }
         public string Codigo { get; set; }
 
-        public List<Coordenada> coordinates { get; set; }
+        public List<Coordenada> Coordenadas { get; set; }
 
         public bool contains(Coordenada location)
         {
             bool contains = false;
-            for (int i = 0, j = this.coordinates.Count - 1; i < this.coordinates.Count; j = i++)
+            for (int i = 0, j = this.Coordenadas.Count - 1; i < this.Coordenadas.Count; j = i++)
             {
-                if (((this.coordinates[i].latitude > location.latitude) != (this.coordinates[j].latitude > location.latitude)) && (location.longitude < (this.coordinates[j].longitude - this.coordinates[i].longitude) * (location.latitude - this.coordinates[i].latitude) / (this.coordinates[j].latitude - this.coordinates[i].latitude) + this.coordinates[i].longitude))
+                if (((this.Coordenadas[i].latitude > location.latitude) != (this.Coordenadas[j].latitude > location.latitude)) && (location.longitude < (this.Coordenadas[j].longitude - this.Coordenadas[i].longitude) * (location.latitude - this.Coordenadas[i].latitude) / (this.Coordenadas[j].latitude - this.Coordenadas[i].latitude) + this.Coordenadas[i].longitude))
                     contains = !contains;
             }
             return contains;
