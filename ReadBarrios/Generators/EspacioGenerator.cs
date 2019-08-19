@@ -8,12 +8,12 @@ using System.Xml.Linq;
 
 namespace ReadBarrios.Generators
 {
-    public class SpaceGenerator
+    public class EspacioGenerator
     {
         private readonly string _pathIn;
         private readonly IEspacioBusiness _espaciosBusiness;
 
-        public SpaceGenerator(IEspacioBusiness espacioBusiness, string pathIn)
+        public EspacioGenerator(IEspacioBusiness espacioBusiness, string pathIn)
         {
             _espaciosBusiness = espacioBusiness;
             _pathIn = pathIn;

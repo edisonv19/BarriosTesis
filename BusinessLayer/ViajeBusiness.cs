@@ -1,29 +1,29 @@
 ﻿using BusinessLayer.Caches;
 using BusinessLayer.Factories;
 using BusinessLayer.Interfaces;
-using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
 using Domain.Interfaces;
 using OfficeOpenXml;
-using System.IO;
 using System.Linq;
 using Utils.Helpers;
 
 namespace BusinessLayer
 {
-    public class ViajeBusiness
+    public class ViajeBusiness : AbsExcelPackage, IViajeBusiness
     {
+        // Business
+        private readonly ILugarBusiness _lugarBusiness;
         // Repositories
-        private IViajeRepository _viajeRepository;
+        private readonly IViajeRepository _viajeRepository;
 
         // Cache
         private ICache<IDataEncuesta> _cache;
 
-        public ViajeBusiness()
+        public ViajeBusiness(IViajeRepository viajeRepository, ILugarBusiness lugarBusiness)
         {
-            _viajeRepository = new ViajeDataAccess();
-
+            _lugarBusiness = lugarBusiness;
+            _viajeRepository = viajeRepository;
             _cache = new DataCache<IDataEncuesta>(new DataEncuestaFactory());
         }
 
@@ -34,11 +34,11 @@ namespace BusinessLayer
             return viaje;
         }
 
-        public int InsertByExcel(FileInfo file)
+        public int InsertByExcel(string pathFile)
         {
             int count = 0;
 
-            using (ExcelPackage package = new ExcelPackage(file))
+            using (ExcelPackage package = GetPackage(pathFile))
             {
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
 
@@ -65,8 +65,6 @@ namespace BusinessLayer
                 int horaFin_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("HoraFin")).Start.Column;
                 int transporte_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Transporte")).Start.Column;
                 int observaciones_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Observaciones")).Start.Column;
-
-                LugarBusiness lugarBusiness = new LugarBusiness();
 
                 // Recorro las filas del excel
                 for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
@@ -103,7 +101,7 @@ namespace BusinessLayer
                         lugar_o.Numero = excelWorksheet.Cells[i, num_o_j].Value.GetString();
                         lugar_o.IdZona = zona_o.IdCodigo;
 
-                        lugar_o = lugarBusiness.Insert(lugar_o);
+                        lugar_o = _lugarBusiness.Insert(lugar_o);
 
                         _cache.SetObject($"lugar_{lugar_o.Latitud};{lugar_o.Longitud}", lugar_o);
                     }
@@ -136,7 +134,7 @@ namespace BusinessLayer
                         lugar_d.Numero = excelWorksheet.Cells[i, num_d_j].Value.GetString();
                         lugar_d.IdZona = zona_d.IdCodigo;
 
-                        lugar_d = lugarBusiness.Insert(lugar_d);
+                        lugar_d = _lugarBusiness.Insert(lugar_d);
 
                         _cache.SetObject($"lugar_{lugar_d.Latitud};{lugar_d.Longitud}", lugar_d);
                     }

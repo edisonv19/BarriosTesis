@@ -1,16 +1,16 @@
-﻿using DataAccessLayer;
+﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Interfaces;
 using Domain;
 
 namespace BusinessLayer
 {
-    public class CodigoBusiness
+    public class CodigoBusiness : ICodigoBusiness
     {
-        private ICodigoRepository _codigoRepository;
+        private readonly ICodigoRepository _codigoRepository;
 
-        public CodigoBusiness()
+        public CodigoBusiness(ICodigoRepository codigoRepository)
         {
-            _codigoRepository = new CodigoDataAccess();
+            _codigoRepository = codigoRepository;
         }
 
         public Codigo GetCodigoByClave(Codigo codigo)

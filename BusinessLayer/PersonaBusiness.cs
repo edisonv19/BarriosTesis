@@ -1,28 +1,29 @@
 ﻿using BusinessLayer.Caches;
 using BusinessLayer.Factories;
 using BusinessLayer.Interfaces;
-using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
 using Domain.Interfaces;
 using OfficeOpenXml;
-using System.IO;
 using System.Linq;
 using Utils.Helpers;
 
 namespace BusinessLayer
 {
-    public class PersonaBusiness
+    public class PersonaBusiness : AbsExcelPackage, IPersonaBusiness
     {
+        // Business
+        private readonly ILugarBusiness _lugarBusiness;
         // Repositories
-        private IPersonaRepository _personaRepository;
+        private readonly IPersonaRepository _personaRepository;
 
         // Cache
         private ICache<IDataEncuesta> _cache;
 
-        public PersonaBusiness()
+        public PersonaBusiness(IPersonaRepository personaRepository, ILugarBusiness lugarBusiness) : base()
         {
-            _personaRepository = new PersonaDataAccess();
+            _lugarBusiness = lugarBusiness;
+            _personaRepository = personaRepository;
             _cache = new DataCache<IDataEncuesta>(new DataEncuestaFactory());
         }
 
@@ -33,11 +34,11 @@ namespace BusinessLayer
             return persona;
         }
 
-        public int InsertByExcel(FileInfo file)
+        public int InsertByExcel(string pathFile)
         {
             int count = 0;
 
-            using (ExcelPackage package = new ExcelPackage(file))
+            using (ExcelPackage package = GetPackage(pathFile))
             {
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[1];
 
@@ -56,8 +57,6 @@ namespace BusinessLayer
                 int lat_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Latitud")).Start.Column;
                 int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
                 int identificacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Identificacion_OLD")).Start.Column;
-
-                LugarBusiness lugarBusiness = new LugarBusiness();
 
                 for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
                 {
@@ -134,7 +133,7 @@ namespace BusinessLayer
                         lugar.IdZona = zona.IdCodigo;
                         lugar.IdTipoZonaResidencial = zonaResidencial.IdCodigo;
 
-                        lugar = lugarBusiness.Insert(lugar);
+                        lugar = _lugarBusiness.Insert(lugar);
 
                         _cache.SetObject($"lugar_{lugar.Latitud};{lugar.Longitud}", lugar);
                     }

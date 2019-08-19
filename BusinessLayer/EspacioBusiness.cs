@@ -1,5 +1,4 @@
 ﻿using BusinessLayer.Interfaces;
-using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
 using System.Collections.Generic;
@@ -8,8 +7,10 @@ namespace BusinessLayer
 {
     public class EspacioBusiness : IEspacioBusiness
     {
+        // Business
+        private readonly ICodigoBusiness _codigoBusiness;
         // Repositories
-        private IEspacioRepository _espacioRepository;
+        private readonly IEspacioRepository _espacioRepository;
 
         // Diccionario de relación de RRCC y zonas
         public static readonly Dictionary<string, string> zonas = new Dictionary<string, string>()
@@ -124,9 +125,10 @@ namespace BusinessLayer
             {"-1", "Fuera de zona"}
         };
 
-        public EspacioBusiness()
+        public EspacioBusiness(IEspacioRepository espacioRepository, ICodigoBusiness codigoBusiness)
         {
-            _espacioRepository = new EspacioDataAccess();
+            _espacioRepository = espacioRepository;
+            _codigoBusiness = codigoBusiness;
         }
 
         public Espacio GetByCodigo(Espacio espacio)
@@ -148,12 +150,10 @@ namespace BusinessLayer
         // inserta espacios y retorna los ids
         public IEnumerable<Espacio> InsertList(List<Espacio> espacios)
         {
-            var CodigoBS = new CodigoBusiness();
-
             IList<Espacio> espaciosNew = new List<Espacio>();
 
             // get idCategoria => Radio censal
-            int? idCategoria = CodigoBS.GetCodigoByClave(new Codigo() { Grupo = "CategoriaEspacio", Clave = "RadioCensal" }).IdCodigo;
+            int? idCategoria = _codigoBusiness.GetCodigoByClave(new Codigo() { Grupo = "CategoriaEspacio", Clave = "RadioCensal" }).IdCodigo;
 
             // insert space
             foreach (Espacio espacio in espacios)

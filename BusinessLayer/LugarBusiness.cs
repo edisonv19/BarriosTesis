@@ -1,15 +1,15 @@
-﻿using DataAccessLayer;
+﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Interfaces;
 using Domain;
 
 namespace BusinessLayer
 {
-    public class LugarBusiness
+    public class LugarBusiness : ILugarBusiness
     {
-        private ILugarRepository _lugarRepository;
-        public LugarBusiness()
+        private readonly ILugarRepository _lugarRepository;
+        public LugarBusiness(ILugarRepository lugarRepository)
         {
-            _lugarRepository = new LugarDataAccess();
+            _lugarRepository = lugarRepository;
         }
         public Lugar Insert(Lugar lugar)
         {

@@ -1,4 +1,7 @@
 ﻿using BusinessLayer;
+using BusinessLayer.Interfaces;
+using DataAccessLayer;
+using DataAccessLayer.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReadBarrios.Generators;
@@ -22,21 +25,36 @@ namespace ReadBarrios
 
             // Setup our DI
             // Create service collection and configure our services
-            //var serviceProvider = ConfigureServices();    // Generate a provider
+            var serviceProvider = ConfigureServices();    // Generate a provider
 
-            //// Kick off our actual code
-            //serviceProvider.GetService<ConsoleApplication>().Run();
+            // Kick off our actual code
+            var service = serviceProvider.GetService<CodigoGenerator>();
+            var codigo = service.GetCode("3", "NivelEducativo");
+
+            Console.WriteLine(codigo.Valor);
         }
 
-        //private static IServiceProvider ConfigureServices()
-        //{
-        //    IServiceCollection services = new ServiceCollection();
+        private static IServiceProvider ConfigureServices()
+        {
+            IServiceCollection services = new ServiceCollection();
 
-        //    // Services
-        //    services.AddScoped<ITestService, TestService>();
-        //    services.AddTransient<ConsoleApplication>();
+            // Services
+            services.AddScoped<ICodigoBusiness, CodigoBusiness>();
+            services.AddScoped<ILugarBusiness, LugarBusiness>();
+            services.AddScoped<IEspacioBusiness, EspacioBusiness>();
+            services.AddScoped<IPersonaBusiness, PersonaBusiness>();
+            services.AddScoped<IViajeBusiness, ViajeBusiness>();
 
-        //    return services.BuildServiceProvider();
-        //}
+            // Repositories
+            services.AddScoped<ICodigoRepository, CodigoDataAccess>();
+            services.AddScoped<ILugarRepository, LugarDataAccess>();
+            services.AddScoped<IEspacioRepository, EspacioDataAccess>();
+            services.AddScoped<IPersonaBusiness, PersonaBusiness>();
+            services.AddScoped<IViajeRepository, ViajeDataAccess>();
+
+            services.AddTransient(typeof(CodigoGenerator));
+
+            return services.BuildServiceProvider();
+        }
     }
 }
