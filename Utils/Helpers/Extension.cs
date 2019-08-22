@@ -22,7 +22,7 @@ namespace Utils.Helpers
 
         public static string GetString(this object value)
         {
-            return value.ToString();
+            return value == null ? null : value.ToString();
         }
 
         public static int? GetInt(this object value)

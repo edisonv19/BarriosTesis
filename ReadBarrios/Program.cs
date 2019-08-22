@@ -1,7 +1,10 @@
 ﻿using BusinessLayer;
+using BusinessLayer.Caches;
+using BusinessLayer.Factories;
 using BusinessLayer.Interfaces;
 using DataAccessLayer;
 using DataAccessLayer.Interfaces;
+using Domain.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReadBarrios.Generators;
@@ -28,10 +31,10 @@ namespace ReadBarrios
             var serviceProvider = ConfigureServices();    // Generate a provider
 
             // Kick off our actual code
-            var service = serviceProvider.GetService<CodigoGenerator>();
-            var codigo = service.GetCode("3", "NivelEducativo");
+            var service = serviceProvider.GetService<PersonaGenerator>();
+            var codigo = service.GeneretePersons("E:/Tesis2/Excels/Prod/personas_with_zonas.xlsx");
 
-            Console.WriteLine(codigo.Valor);
+            Console.WriteLine(codigo);
         }
 
         private static IServiceProvider ConfigureServices()
@@ -39,6 +42,8 @@ namespace ReadBarrios
             IServiceCollection services = new ServiceCollection();
 
             // Services
+            services.AddScoped(typeof(IAbstractFactory<IDataEncuesta>), typeof(DataEncuestaFactory));
+            services.AddScoped(typeof(ICache<>), typeof(DataCache<>));
             services.AddScoped<ICodigoBusiness, CodigoBusiness>();
             services.AddScoped<ILugarBusiness, LugarBusiness>();
             services.AddScoped<IEspacioBusiness, EspacioBusiness>();
@@ -49,10 +54,11 @@ namespace ReadBarrios
             services.AddScoped<ICodigoRepository, CodigoDataAccess>();
             services.AddScoped<ILugarRepository, LugarDataAccess>();
             services.AddScoped<IEspacioRepository, EspacioDataAccess>();
-            services.AddScoped<IPersonaBusiness, PersonaBusiness>();
+            services.AddScoped<IPersonaRepository, PersonaDataAccess>();
             services.AddScoped<IViajeRepository, ViajeDataAccess>();
 
             services.AddTransient(typeof(CodigoGenerator));
+            services.AddTransient(typeof(PersonaGenerator));
 
             return services.BuildServiceProvider();
         }

@@ -11,9 +11,9 @@ namespace ReadBarrios.Generators
             _personaBusiness = personaBusiness;
         }
 
-        public void GeneretePersons(string pathFile)
+        public int GeneretePersons(string pathFile)
         {
-            _personaBusiness.InsertByExcel(pathFile);
+            return _personaBusiness.InsertByExcel(pathFile);
         }
     }
 }

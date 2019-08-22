@@ -28,13 +28,14 @@ namespace DataAccessLayer
                     oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
                     oComm.Parameters.Add(new SqlParameter("@Nombre", SqlDbType.NVarChar, 50, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Nombre));
-                    oComm.Parameters.Add(new SqlParameter("@Edad", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Edad));
-                    oComm.Parameters.Add(new SqlParameter("@IdLugar", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdLugar));
-                    oComm.Parameters.Add(new SqlParameter("@IdSocioEconomico", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdSocioEconomico));
-                    oComm.Parameters.Add(new SqlParameter("@IdSexo", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdSexo));
-                    oComm.Parameters.Add(new SqlParameter("@IdNivelEducativo", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdNivelEducativo));
-                    oComm.Parameters.Add(new SqlParameter("@IdOcupacion", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdOcupacion));
-                    oComm.Parameters.Add(new SqlParameter("@IdEstacion", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdEstacion));
+                    oComm.Parameters.Add(new SqlParameter("@Edad", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.Edad));
+                    oComm.Parameters.Add(new SqlParameter("@IdLugar", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.IdLugar));
+                    oComm.Parameters.Add(new SqlParameter("@IdSocioEconomico", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.IdSocioEconomico));
+                    oComm.Parameters.Add(new SqlParameter("@IdSexo", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.IdSexo));
+                    oComm.Parameters.Add(new SqlParameter("@IdNivelEducativo", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.IdNivelEducativo));
+                    oComm.Parameters.Add(new SqlParameter("@IdOcupacion", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.IdOcupacion));
+                    oComm.Parameters.Add(new SqlParameter("@IdEstacion", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, persona.IdEstacion));
+                    oComm.Parameters.Add(new SqlParameter("@Identificacion", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.Identificacion));
 
                     id = (int)oComm.ExecuteScalar();
 

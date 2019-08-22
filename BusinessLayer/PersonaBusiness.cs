@@ -1,10 +1,9 @@
-﻿using BusinessLayer.Caches;
-using BusinessLayer.Factories;
-using BusinessLayer.Interfaces;
+﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Interfaces;
 using Domain;
 using Domain.Interfaces;
 using OfficeOpenXml;
+using System;
 using System.Linq;
 using Utils.Helpers;
 
@@ -20,11 +19,16 @@ namespace BusinessLayer
         // Cache
         private ICache<IDataEncuesta> _cache;
 
-        public PersonaBusiness(IPersonaRepository personaRepository, ILugarBusiness lugarBusiness) : base()
+        public PersonaBusiness(IPersonaRepository personaRepository, ILugarBusiness lugarBusiness, ICache<IDataEncuesta> cache) : base()
         {
             _lugarBusiness = lugarBusiness;
             _personaRepository = personaRepository;
-            _cache = new DataCache<IDataEncuesta>(new DataEncuestaFactory());
+            _cache = cache;
+        }
+
+        public Persona GetByIdentificacion(Persona persona)
+        {
+            return _personaRepository.GetByIdentificacion(persona);
         }
 
         public Persona Insert(Persona persona)
@@ -58,106 +62,118 @@ namespace BusinessLayer
                 int lgn_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Longitud")).Start.Column;
                 int identificacion_j = excelWorksheet.Cells["1:1"].First(c => c.Value.ToString().Equals("Identificacion_OLD")).Start.Column;
 
-                for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
+                try
                 {
-                    // Id SocioEconómico
-                    Codigo nivelSocioEcon = new Codigo()
+                    for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
                     {
-                        Clave = excelWorksheet.Cells[i, ingreso_j].Value.GetString()
-                    };
+                        string identificacion = excelWorksheet.Cells[i, identificacion_j].Value.GetString();
 
-                    nivelSocioEcon = (Codigo)_cache.GetObject($"codigo_NivelSocioEconomico;{nivelSocioEcon.Clave}");
+                        if (GetByIdentificacion(new Persona() { Identificacion = identificacion }) == null)
+                        {
+                            // Id SocioEconómico
+                            Codigo nivelSocioEcon = new Codigo()
+                            {
+                                Clave = excelWorksheet.Cells[i, ingreso_j].Value.GetString()
+                            };
 
-                    // Id Sexo
-                    Codigo sexo = new Codigo()
-                    {
-                        Clave = excelWorksheet.Cells[i, sexo_j].Value.GetString()
-                    };
+                            nivelSocioEcon = (Codigo)_cache.GetObject($"codigo_NivelSocioEconomico;{nivelSocioEcon.Clave}");
 
-                    sexo = (Codigo)_cache.GetObject($"codigo_Sexo;{sexo.Clave}");
+                            // Id Sexo
+                            Codigo sexo = new Codigo()
+                            {
+                                Clave = excelWorksheet.Cells[i, sexo_j].Value.GetString()
+                            };
 
-                    // Id NivelEducativo
-                    Codigo nivelEducativo = new Codigo()
-                    {
-                        Clave = excelWorksheet.Cells[i, estudios_j].Value.GetString()
-                    };
+                            sexo = (Codigo)_cache.GetObject($"codigo_Sexo;{sexo.Clave}");
 
-                    nivelEducativo = (Codigo)_cache.GetObject($"codigo_NivelEducativo;{nivelEducativo.Clave}");
+                            // Id NivelEducativo
+                            Codigo nivelEducativo = new Codigo()
+                            {
+                                Clave = excelWorksheet.Cells[i, estudios_j].Value.GetString()
+                            };
 
-                    // Id Ocupacion
-                    Codigo ocupacion = new Codigo()
-                    {
-                        Clave = excelWorksheet.Cells[i, ocupacion_j].Value.GetString()
-                    };
+                            nivelEducativo = (Codigo)_cache.GetObject($"codigo_NivelEducativo;{nivelEducativo.Clave}");
 
-                    ocupacion = (Codigo)_cache.GetObject($"codigo_Ocupacion;{ocupacion.Clave}");
+                            // Id Ocupacion
+                            Codigo ocupacion = new Codigo()
+                            {
+                                Clave = excelWorksheet.Cells[i, ocupacion_j].Value.GetString()
+                            };
 
-                    // Id Zona Residencial
-                    Codigo zonaResidencial = new Codigo()
-                    {
-                        Clave = excelWorksheet.Cells[i, zonaResid_j].Value.GetString()
-                    };
+                            ocupacion = (Codigo)_cache.GetObject($"codigo_Ocupacion;{ocupacion.Clave}");
 
-                    zonaResidencial = (Codigo)_cache.GetObject($"codigo_TipoZonaResidencia;{zonaResidencial.Clave}");
+                            // Id Zona Residencial
+                            Codigo zonaResidencial = new Codigo()
+                            {
+                                Clave = excelWorksheet.Cells[i, zonaResid_j].Value.GetString()
+                            };
 
-                    // Id Estadion
-                    Codigo estacion = new Codigo()
-                    {
-                        Clave = excelWorksheet.Cells[i, estacion_j].Value.GetString()
-                    };
+                            zonaResidencial = (Codigo)_cache.GetObject($"codigo_TipoZonaResidencia;{zonaResidencial.Clave}");
 
-                    estacion = (Codigo)_cache.GetObject($"codigo_Estacion;{estacion.Clave}");
+                            // Id Estadion
+                            Codigo estacion = new Codigo()
+                            {
+                                Clave = excelWorksheet.Cells[i, estacion_j].Value.GetString()
+                            };
 
-                    // Id Zona
-                    Codigo zona = new Codigo()
-                    {
-                        Clave = excelWorksheet.Cells[i, zona_j].Value.GetString()
-                    };
+                            estacion = (Codigo)_cache.GetObject($"codigo_Estacion;{estacion.Clave}");
 
-                    zona = (Codigo)_cache.GetObject($"espacio_{zona.Clave}");
+                            // Id Zona
+                            Espacio zona = new Espacio()
+                            {
+                                Codigo = excelWorksheet.Cells[i, zona_j].Value.GetString()
+                            };
 
-                    // Id Lugar
-                    Lugar lugar = new Lugar()
-                    {
-                        Latitud = excelWorksheet.Cells[i, lat_j].Value.GetDouble(),
-                        Longitud = excelWorksheet.Cells[i, lgn_j].Value.GetDouble()
-                    };
+                            zona = (Espacio)_cache.GetObject($"espacio_{zona.Codigo}");
 
-                    var lugarCache = (Lugar)_cache.GetObject($"lugar_{lugar.Latitud};{lugar.Longitud}");
+                            // Id Lugar
+                            Lugar lugar = new Lugar()
+                            {
+                                Latitud = excelWorksheet.Cells[i, lat_j].Value.GetDouble(),
+                                Longitud = excelWorksheet.Cells[i, lgn_j].Value.GetDouble()
+                            };
 
-                    // Not exists en db => insert
-                    if (lugarCache == null)
-                    {
-                        lugar.Calle = excelWorksheet.Cells[i, calle_j].Value.GetString();
-                        lugar.Numero = excelWorksheet.Cells[i, nroPostal_j].Value.GetString();
-                        lugar.IdZona = zona.IdCodigo;
-                        lugar.IdTipoZonaResidencial = zonaResidencial.IdCodigo;
+                            var lugarCache = (Lugar)_cache.GetObject($"lugar_{lugar.Latitud};{lugar.Longitud}");
 
-                        lugar = _lugarBusiness.Insert(lugar);
+                            // Not exists en db => insert
+                            if (lugarCache == null && lugar.Latitud != null && lugar.Longitud != null)
+                            {
+                                lugar.Calle = excelWorksheet.Cells[i, calle_j].Value.GetString();
+                                lugar.Numero = excelWorksheet.Cells[i, nroPostal_j].Value.GetString();
+                                lugar.IdZona = zona.IdEspacio;
+                                lugar.IdTipoZonaResidencial = zonaResidencial.IdCodigo;
 
-                        _cache.SetObject($"lugar_{lugar.Latitud};{lugar.Longitud}", lugar);
+                                lugar = _lugarBusiness.Insert(lugar);
+
+                                _cache.SetObject($"lugar_{lugar.Latitud};{lugar.Longitud}", lugar);
+                            }
+                            else
+                            {
+                                lugar = lugarCache;
+                            }
+
+                            // Persona
+                            Persona persona = new Persona()
+                            {
+                                Nombre = excelWorksheet.Cells[i, nombre_j].Value.GetString(),
+                                Edad = excelWorksheet.Cells[i, edad_j].Value.GetInt(),
+                                IdLugar = lugar?.IdLugar,
+                                IdSocioEconomico = nivelSocioEcon?.IdCodigo,
+                                IdSexo = sexo?.IdCodigo,
+                                IdNivelEducativo = nivelEducativo?.IdCodigo,
+                                IdOcupacion = ocupacion?.IdCodigo,
+                                IdEstacion = estacion?.IdCodigo,
+                                Identificacion = identificacion
+                            };
+
+                            persona = Insert(persona);
+                            count = persona.IdPersona == null ? count : ++count;
+                        }
                     }
-                    else
-                    {
-                        lugar = lugarCache;
-                    }
-
-                    // Persona
-                    Persona persona = new Persona()
-                    {
-                        Nombre = excelWorksheet.Cells[i, nombre_j].Value.GetString(),
-                        Edad = excelWorksheet.Cells[i, edad_j].Value.GetInt(),
-                        IdLugar = lugar.IdLugar,
-                        IdSocioEconomico = nivelSocioEcon.IdCodigo,
-                        IdSexo = sexo.IdCodigo,
-                        IdNivelEducativo = nivelEducativo.IdCodigo,
-                        IdOcupacion = ocupacion.IdCodigo,
-                        IdEstacion = estacion.IdCodigo,
-                        Identificacion = excelWorksheet.Cells[i, identificacion_j].Value.GetString()
-                    };
-
-                    persona = Insert(persona);
-                    count = persona.IdPersona == null ? count : count++;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
                 }
             }
 

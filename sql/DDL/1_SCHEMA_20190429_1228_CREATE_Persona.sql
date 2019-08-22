@@ -9,13 +9,13 @@ BEGIN
     CREATE TABLE dbo.[Persona] (
 		[IdPersona] 		INT IDENTITY(1,1),
 		[Nombre]		NVARCHAR(50) NOT NULL,
-		[Edad]			INT NOT NULL,
+		[Edad]			INT NULL,
 		
-		[IdLugar]		INT NOT NULL,
-		[IdSocioEconomico]	INT NOT NULL,
-		[IdSexo]			INT NOT NULL,
-		[IdNivelEducativo]	INT NOT NULL,
-		[IdOcupacion]			INT NOT NULL,
+		[IdLugar]		INT NULL,
+		[IdSocioEconomico]	INT NULL,
+		[IdSexo]			INT NULL,
+		[IdNivelEducativo]	INT NULL,
+		[IdOcupacion]		INT NULL,
 		
 		[IdEstacion]		INT NULL
 	);

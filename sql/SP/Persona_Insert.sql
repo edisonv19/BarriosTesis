@@ -12,14 +12,14 @@ GO
 
 CREATE PROCEDURE [dbo].[Persona_Insert]
 	@Nombre		NVARCHAR(50),
-	@Edad		INT,
-	@IdLugar	INT,
-	@IdSocioEconomico 	INT,
-	@IdSexo		INT,
-	@IdNivelEducativo	INT,
-	@IdOcupacion	INT,
+	@Edad		INT = NULL,
+	@IdLugar	INT = NULL,
+	@IdSocioEconomico 	INT = NULL,
+	@IdSexo		INT = NULL,
+	@IdNivelEducativo	INT = NULL,
+	@IdOcupacion	INT = NULL,
 	@IdEstacion	INT = NULL,
-	@Identificacion VARCHAR(100)
+	@Identificacion VARCHAR(100) = NULL
 AS
 BEGIN
 	INSERT INTO [dbo].[Persona](
@@ -43,8 +43,8 @@ BEGIN
 		,@IdOcupacion
 		,@IdEstacion
 		,@Identificacion
-	)
+	);
 
-	SELECT IDENT_CURRENT('Persona');
+	SELECT CONVERT(INT, IDENT_CURRENT('Persona'));
 END
 GO

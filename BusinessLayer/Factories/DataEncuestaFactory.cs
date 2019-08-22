@@ -1,5 +1,4 @@
 ﻿using BusinessLayer.Interfaces;
-using DataAccessLayer;
 using DataAccessLayer.Interfaces;
 using Domain;
 using Domain.Interfaces;
@@ -14,12 +13,12 @@ namespace BusinessLayer.Factories
         private IPersonaRepository _personaRepository;
         private IEspacioRepository _espacioRepository;
 
-        public DataEncuestaFactory()
+        public DataEncuestaFactory(ILugarRepository lugarRepository, ICodigoRepository codigoRepository, IPersonaRepository personaRepository, IEspacioRepository espacioRepository)
         {
-            _lugarRepository = new LugarDataAccess();
-            _codigoRepository = new CodigoDataAccess();
-            _personaRepository = new PersonaDataAccess();
-            _espacioRepository = new EspacioDataAccess();
+            _lugarRepository = lugarRepository;
+            _codigoRepository = codigoRepository;
+            _personaRepository = personaRepository;
+            _espacioRepository = espacioRepository;
         }
 
         public IDataEncuesta GetData(string key)

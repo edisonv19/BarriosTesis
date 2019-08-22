@@ -11,8 +11,8 @@ GO
 -- =================================================
 
 CREATE PROCEDURE [dbo].[Lugar_GetByLatLng]
-	@Latitud [decimal](9, 7) NULL,
-	@Longitud [decimal](9, 7) NULL
+	@Latitud [float] = NULL,
+	@Longitud [float] = NULL
 AS
 BEGIN
 	SELECT

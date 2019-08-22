@@ -11,8 +11,8 @@ BEGIN
 		
 		[Calle]			VARCHAR(100) NOT NULL,
 		[Numero]		VARCHAR(100) NOT NULL,
-		[Latitud]		DECIMAL(9,7) NULL,
-		[Longitud]		DECIMAL(9,7) NULL,
+		[Latitud]		FLOAT NULL,
+		[Longitud]		FLOAT NULL,
 		[IdRadioCensal]	INT NULL,
 		[IdZona]		INT NOT NULL,
 		[IdCategoria]	INT NULL,

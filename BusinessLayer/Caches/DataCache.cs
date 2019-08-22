@@ -21,7 +21,7 @@ namespace BusinessLayer.Caches
 
         public T GetObject(string key)
         {
-            if (_cache[key] == null)
+            if (!_cache.ContainsKey(key))
             {
                 T data = _dataFactory.GetData(key);
 

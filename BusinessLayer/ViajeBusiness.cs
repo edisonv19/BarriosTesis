@@ -20,11 +20,11 @@ namespace BusinessLayer
         // Cache
         private ICache<IDataEncuesta> _cache;
 
-        public ViajeBusiness(IViajeRepository viajeRepository, ILugarBusiness lugarBusiness)
+        public ViajeBusiness(IViajeRepository viajeRepository, ILugarBusiness lugarBusiness, ICache<IDataEncuesta> cache)
         {
             _lugarBusiness = lugarBusiness;
             _viajeRepository = viajeRepository;
-            _cache = new DataCache<IDataEncuesta>(new DataEncuestaFactory());
+            _cache = cache;
         }
 
         public Viaje Insert(Viaje viaje)

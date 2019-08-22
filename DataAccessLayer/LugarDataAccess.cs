@@ -29,20 +29,21 @@ namespace DataAccessLayer
 
                     oComm.Parameters.Add(new SqlParameter("@Calle", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Calle));
                     oComm.Parameters.Add(new SqlParameter("@Numero", SqlDbType.VarChar, 100, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Numero));
-                    oComm.Parameters.Add(new SqlParameter("@Latitud", SqlDbType.Decimal, 100, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Latitud));
-                    oComm.Parameters.Add(new SqlParameter("@Longitud", SqlDbType.Decimal, 0, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Longitud));
+                    oComm.Parameters.Add(new SqlParameter("@Latitud", SqlDbType.Float, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Latitud));
+                    oComm.Parameters.Add(new SqlParameter("@Longitud", SqlDbType.Float, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Longitud));
                     oComm.Parameters.Add(new SqlParameter("@IdRadioCensal", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.IdRadioCensal));
-                    oComm.Parameters.Add(new SqlParameter("@IdZona", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.IdZona));
-                    oComm.Parameters.Add(new SqlParameter("@IdCategoria", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.IdCategoria));
-                    oComm.Parameters.Add(new SqlParameter("@Descripcion", SqlDbType.VarChar, 200, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.Descripcion));
+                    oComm.Parameters.Add(new SqlParameter("@IdZona", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.IdZona));
+                    oComm.Parameters.Add(new SqlParameter("@IdCategoria", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.IdCategoria));
+                    oComm.Parameters.Add(new SqlParameter("@Descripcion", SqlDbType.VarChar, 200, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.Descripcion));
                     oComm.Parameters.Add(new SqlParameter("@Radio", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.Radio));
+                    oComm.Parameters.Add(new SqlParameter("@IdTipoZonaResidencial", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.IdTipoZonaResidencial));
 
                     id = (int)oComm.ExecuteScalar();
 
                     oTran.Commit();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 oTran.Rollback();
                 throw new Exception($"Hubo un error al insertar a un {tableName} en la base de datos.");
@@ -75,8 +76,8 @@ namespace DataAccessLayer
                         oComm.CommandType = CommandType.StoredProcedure;
                         oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
 
-                        oComm.Parameters.Add(new SqlParameter("@Latitud", SqlDbType.Decimal, 0, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Latitud));
-                        oComm.Parameters.Add(new SqlParameter("@Longitud", SqlDbType.Decimal, 100, ParameterDirection.Input, false, 9, 7, null, DataRowVersion.Original, lugar.Longitud));
+                        oComm.Parameters.Add(new SqlParameter("@Latitud", SqlDbType.Float, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.Latitud));
+                        oComm.Parameters.Add(new SqlParameter("@Longitud", SqlDbType.Float, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.Longitud));
                         adapter.SelectCommand = oComm;
                         adapter.Fill(ds);
                     }

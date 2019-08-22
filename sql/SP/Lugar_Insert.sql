@@ -15,11 +15,12 @@ CREATE PROCEDURE [dbo].[Lugar_Insert]
 	@Numero		VARCHAR(100),
 	@Latitud	DECIMAL(9,7),
 	@Longitud	DECIMAL(9,7),
-	@IdRadioCensal	INT,
+	@IdRadioCensal	INT = NULL,
 	@IdZona		INT,
-	@IdCategoria	INT,
-	@Descripcion	NVARCHAR(200),
-	@Radio		INT
+	@IdCategoria	INT = NULL,
+	@Descripcion	NVARCHAR(200) = NULL,
+	@Radio		INT = NULL,
+	@IdTipoZonaResidencial INT = NULL
 AS
 BEGIN
 	INSERT INTO [dbo].[Lugar]
@@ -31,7 +32,8 @@ BEGIN
            ,[IdZona]
            ,[IdCategoria]
            ,[Descripcion]
-           ,[Radio])
+           ,[Radio]
+		   ,[IdTipoZonaResidencial])
 	VALUES(
 		@Calle,
 		@Numero,
@@ -41,10 +43,11 @@ BEGIN
 		@IdZona,
 		@IdCategoria,
 		@Descripcion,
-		@Radio
+		@Radio,
+		@IdTipoZonaResidencial
 	)
 
-	SELECT IDENT_CURRENT('Lugar')
+	SELECT CONVERT(INT, IDENT_CURRENT('Lugar'));
 
 END
 GO

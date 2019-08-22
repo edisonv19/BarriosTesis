@@ -6,5 +6,6 @@ namespace BusinessLayer.Interfaces
     {
         Persona Insert(Persona persona);
         int InsertByExcel(string pathFile);
+        Persona GetByIdentificacion(Persona persona);
     }
 }
