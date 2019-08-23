@@ -11,9 +11,9 @@ namespace ReadBarrios.Generators
             _viajeBusiness = viajeBusiness;
         }
 
-        public void GenereteViaje(string filePath)
+        public int GenereteViaje(string filePath)
         {
-            _viajeBusiness.InsertByExcel(filePath);
+            return _viajeBusiness.InsertByExcel(filePath);
         }
     }
 }

@@ -31,10 +31,13 @@ namespace ReadBarrios
             var serviceProvider = ConfigureServices();    // Generate a provider
 
             // Kick off our actual code
-            var service = serviceProvider.GetService<PersonaGenerator>();
-            var codigo = service.GeneretePersons("E:/Tesis2/Excels/Prod/personas_with_zonas.xlsx");
+            //var personaService = serviceProvider.GetService<PersonaGenerator>();
+            //var personas = personaService.GeneretePersons("E:/Tesis2/Excels/Prod/personas_with_zonas.xlsx");
 
-            Console.WriteLine(codigo);
+            var viajeService = serviceProvider.GetService<ViajeGenerator>();
+            var viajes = viajeService.GenereteViaje("E:/Tesis2/Excels/Prod/viajes_lat_lng.xlsx");
+
+            Console.WriteLine(viajes);
         }
 
         private static IServiceProvider ConfigureServices()
@@ -59,6 +62,7 @@ namespace ReadBarrios
 
             services.AddTransient(typeof(CodigoGenerator));
             services.AddTransient(typeof(PersonaGenerator));
+            services.AddTransient(typeof(ViajeGenerator));
 
             return services.BuildServiceProvider();
         }

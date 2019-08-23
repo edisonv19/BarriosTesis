@@ -32,7 +32,14 @@ namespace Utils.Helpers
 
         public static TimeSpan? GetTimeSpan(this object value)
         {
-            return TimeSpan.TryParse(value.ToString(), out TimeSpan lat_o) ? (TimeSpan?)lat_o : null;
+            try
+            {
+                return TimeSpan.FromDays((double)value);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static DateTime? GetDateTime(this object value)

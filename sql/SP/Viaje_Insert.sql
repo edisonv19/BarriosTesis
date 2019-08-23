@@ -21,7 +21,8 @@ CREATE PROCEDURE [dbo].[Viaje_Insert]
 	@HoraInicio TIME = NULL,
 	@HoraFin TIME = NULL,
 	@IdTransporte INT = NULL,
-	@Observaciones NVARCHAR(200) = NULL
+	@Observaciones NVARCHAR(200) = NULL,
+	@FechaStr VARCHAR(50) = NULL
 AS
 BEGIN
 	INSERT INTO [dbo].[Viaje]
@@ -37,6 +38,7 @@ BEGIN
 		,[HoraFin]
 		,[IdTransporte]
 		,[Observaciones]
+		,[FechaStr]
 	)
 	VALUES
 	(
@@ -51,8 +53,9 @@ BEGIN
 		,@HoraFin
 		,@IdTransporte
 		,@Observaciones
+		,@FechaStr
 	)
 
-	SELECT IDENT_CURRENT('Viaje');
+	SELECT CONVERT(INT, IDENT_CURRENT('Viaje'));
 END
 GO

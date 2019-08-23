@@ -39,13 +39,14 @@ namespace DataAccessLayer
                     oComm.Parameters.Add(new SqlParameter("@HoraFin", SqlDbType.Time, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, viaje.HoraFin));
                     oComm.Parameters.Add(new SqlParameter("@IdTransporte", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, viaje.IdTransporte));
                     oComm.Parameters.Add(new SqlParameter("@Observaciones", SqlDbType.NVarChar, 200, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, viaje.Observaciones));
+                    oComm.Parameters.Add(new SqlParameter("@FechaStr", SqlDbType.VarChar, 50, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, viaje.FechaStr));
 
                     id = (int)oComm.ExecuteScalar();
 
                     oTran.Commit();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 oTran.Rollback();
                 throw new Exception("Error to insert a Person");
