@@ -15,10 +15,12 @@ namespace ReadBarrios.Generators
         private readonly string _pathIn;
         private readonly string _pathOut;
         private readonly IEspacioBusiness _espacioBusiness;
+        private readonly ICodigoBusiness _codigoBusiness;
 
-        public ZonaGenerator(IEspacioBusiness espacioBusiness ,string pathIn, string pathOut)
+        public ZonaGenerator(IEspacioBusiness espacioBusiness, ICodigoBusiness codigoBusiness, string pathIn, string pathOut)
         {
             _espacioBusiness = espacioBusiness;
+            _codigoBusiness = codigoBusiness;
             _pathIn = pathIn;
             _pathOut = pathOut;
         }
@@ -85,8 +87,9 @@ namespace ReadBarrios.Generators
         // Obtiene los RRCC
         private List<Espacio> GetPolygons()
         {
+            var codigo = _codigoBusiness.GetCodigoByClave(new Codigo() { Grupo = "CategoriaEspacio", Clave = "RadioCensal" });
             // Busco los RRCC
-            IEnumerable<Espacio> espacios = _espacioBusiness.GetByFilter(new Espacio() { IdCategoria = 110 });
+            IEnumerable<Espacio> espacios = _espacioBusiness.GetByFilter(new Espacio() { IdCategoria = codigo.IdCodigo });
 
             // Cargo las coordenadas en List<Coordenada>
             return espacios.Select(x => { x.Coordenadas = JsonConvert.DeserializeObject<List<Coordenada>>(x.CoordenadasStr); return x; }).ToList();

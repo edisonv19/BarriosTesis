@@ -19,7 +19,7 @@ BEGIN
 		IdCategoria,
 		Codigo,
 		Descripcion,
-		Coordenadas,
+		Coordenadas as CoordenadasStr,
 		IdPadre
 	FROM
 		[Espacio]

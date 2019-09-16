@@ -1,4 +1,5 @@
 ﻿using Domain;
+using System.Collections.Generic;
 
 namespace BusinessLayer.Interfaces
 {
@@ -6,5 +7,7 @@ namespace BusinessLayer.Interfaces
     {
         Lugar Insert(Lugar lugar);
         Lugar GetByLatLng(Lugar lugar);
+        IEnumerable<Lugar> GetByFilter(Lugar lugar);
+        int ReloadRadiosCensales();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain;
+using System.Collections.Generic;
 
 namespace DataAccessLayer.Interfaces
 {
@@ -6,5 +7,7 @@ namespace DataAccessLayer.Interfaces
     {
         int Insert(Lugar lugar);
         Lugar GetByLatLng(Lugar lugar);
+        IEnumerable<Lugar> GetByFilter(Lugar espacio);
+        int Update(Lugar lugar);
     }
 }

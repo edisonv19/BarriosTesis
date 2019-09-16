@@ -34,8 +34,11 @@ namespace ReadBarrios
             //var personaService = serviceProvider.GetService<PersonaGenerator>();
             //var personas = personaService.GeneretePersons("E:/Tesis2/Excels/Prod/personas_with_zonas.xlsx");
 
-            var viajeService = serviceProvider.GetService<ViajeGenerator>();
-            var viajes = viajeService.GenereteViaje("E:/Tesis2/Excels/Prod/viajes_lat_lng.xlsx");
+            //var viajeService = serviceProvider.GetService<ViajeGenerator>();
+            //var viajes = viajeService.GenereteViaje("E:/Tesis2/Excels/Prod/viajes_lat_lng.xlsx");
+
+            var viajeService = serviceProvider.GetService<LugarGenerator>();
+            var viajes = viajeService.UpdateRadioCensal();
 
             Console.WriteLine(viajes);
         }
@@ -63,6 +66,7 @@ namespace ReadBarrios
             services.AddTransient(typeof(CodigoGenerator));
             services.AddTransient(typeof(PersonaGenerator));
             services.AddTransient(typeof(ViajeGenerator));
+            services.AddTransient(typeof(LugarGenerator));
 
             return services.BuildServiceProvider();
         }

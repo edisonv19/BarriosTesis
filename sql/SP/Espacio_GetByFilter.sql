@@ -22,7 +22,7 @@ BEGIN
 		e.IdCategoria,
 		e.Codigo,
 		e.Descripcion,
-		e.Coordenadas,
+		e.Coordenadas as CoordenadasStr,
 		e.IdPadre
 	FROM
 		[Espacio] e

@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Interfaces;
 using Domain;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Utils.Helpers;
@@ -97,6 +98,86 @@ namespace DataAccessLayer
                 return CreateItemFromRow<Lugar>(ds.Tables[0].Rows[0]);
             }
             return null;
+        }
+
+        public IEnumerable<Lugar> GetByFilter(Lugar espacio)
+        {
+            // Creo la conexión y la transacción
+            SqlConnection oConn = new SqlConnection(connectionString);
+            oConn.Open();
+
+            DataSet ds = new DataSet();
+
+            try
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                {
+                    using (SqlCommand oComm = new SqlCommand())
+                    {
+                        oComm.Connection = oConn;
+
+                        oComm.CommandType = CommandType.StoredProcedure;
+                        oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
+
+                        oComm.Parameters.Add(new SqlParameter("@IdRadioCensal", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, espacio.IdRadioCensal));
+
+                        adapter.SelectCommand = oComm;
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                oConn.Close();
+            }
+
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateListFromTable<Lugar>(ds.Tables[0]);
+            }
+            return null;
+        }
+
+        public int Update(Lugar lugar)
+        {
+            SqlConnection oConn = new SqlConnection(connectionString);
+            oConn.Open();
+            SqlTransaction oTran = oConn.BeginTransaction();
+            int rowsAffected;
+            try
+            {
+                using (SqlCommand oComm = new SqlCommand())
+                {
+                    oComm.Connection = oConn;
+                    oComm.Transaction = oTran;
+
+                    oComm.CommandType = CommandType.StoredProcedure;
+                    oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
+
+                    oComm.Parameters.Add(new SqlParameter("@IdLugar", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, lugar.IdLugar));
+                    oComm.Parameters.Add(new SqlParameter("@IdRadioCensal", SqlDbType.Int, 0, ParameterDirection.Input, true, 0, 0, null, DataRowVersion.Original, lugar.IdRadioCensal));
+
+                    rowsAffected = oComm.ExecuteNonQuery();
+
+                    oTran.Commit();
+                }
+            }
+            catch (Exception e)
+            {
+                oTran.Rollback();
+                throw new Exception($"Hubo un error al insertar a un {tableName} en la base de datos.");
+            }
+            finally
+            {
+                oConn.Close();
+                oTran.Dispose();
+            }
+
+            return rowsAffected;
         }
     }
 }

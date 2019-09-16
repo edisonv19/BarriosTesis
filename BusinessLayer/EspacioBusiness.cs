@@ -8,7 +8,7 @@ namespace BusinessLayer
     public class EspacioBusiness : IEspacioBusiness
     {
         // Business
-        private readonly ICodigoBusiness _codigoBusiness;
+        private readonly ICodigoRepository _codigoRepository;
         // Repositories
         private readonly IEspacioRepository _espacioRepository;
 
@@ -125,10 +125,10 @@ namespace BusinessLayer
             {"-1", "Fuera de zona"}
         };
 
-        public EspacioBusiness(IEspacioRepository espacioRepository, ICodigoBusiness codigoBusiness)
+        public EspacioBusiness(IEspacioRepository espacioRepository, ICodigoRepository codigoRepository)
         {
             _espacioRepository = espacioRepository;
-            _codigoBusiness = codigoBusiness;
+            _codigoRepository = codigoRepository;
         }
 
         public Espacio GetByCodigo(Espacio espacio)
@@ -153,7 +153,7 @@ namespace BusinessLayer
             IList<Espacio> espaciosNew = new List<Espacio>();
 
             // get idCategoria => Radio censal
-            int? idCategoria = _codigoBusiness.GetCodigoByClave(new Codigo() { Grupo = "CategoriaEspacio", Clave = "RadioCensal" }).IdCodigo;
+            int? idCategoria = _codigoRepository.GetByClave(new Codigo() { Grupo = "CategoriaEspacio", Clave = "RadioCensal" }).IdCodigo;
 
             // insert space
             foreach (Espacio espacio in espacios)
