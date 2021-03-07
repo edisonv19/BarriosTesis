@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Interfaces;
 using Domain;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Utils.Helpers;
@@ -58,6 +59,48 @@ namespace DataAccessLayer
             }
 
             return id;
+        }
+
+        public IEnumerable<ViajeJourney> GetByPersona(Persona persona)
+        {
+            // Creo la conexión y la transacción
+            SqlConnection oConn = new SqlConnection(connectionString);
+            oConn.Open();
+
+            DataSet ds = new DataSet();
+
+            try
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                {
+                    using (SqlCommand oComm = new SqlCommand())
+                    {
+                        oComm.Connection = oConn;
+
+                        oComm.CommandType = CommandType.StoredProcedure;
+                        oComm.CommandText = $"{tableName}_{this.GetMethodName()}";
+
+                        oComm.Parameters.Add(new SqlParameter("@IdPersona", SqlDbType.Int, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Original, persona.IdPersona));
+
+                        adapter.SelectCommand = oComm;
+                        adapter.Fill(ds);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                oConn.Close();
+            }
+
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                return CreateListFromTable<ViajeJourney>(ds.Tables[0]);
+            }
+            return null;
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using BusinessLayer.Caches;
-using BusinessLayer.Factories;
-using BusinessLayer.Interfaces;
+﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Interfaces;
 using Domain;
 using Domain.Interfaces;
 using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Utils.Helpers;
 
@@ -70,7 +69,7 @@ namespace BusinessLayer
                 try
                 {
                     // Recorro las filas del excel
-                    for (int i = 22059; i <= excelWorksheet.Dimension.Rows; i++)
+                    for (int i = 2; i <= excelWorksheet.Dimension.Rows; i++)
                     {
                         // Get Lugar
                         Persona persona = new Persona()
@@ -202,6 +201,8 @@ namespace BusinessLayer
 
                         viaje = Insert(viaje);
                         count = viaje.IdViaje == null ? count : ++count;
+
+                        Console.WriteLine($"IdViaje {viaje.IdViaje} - Origen: {lugar_o?.Calle} {lugar_o?.Numero} ({lugar_o?.Latitud};{lugar_o?.Longitud} - destino: {lugar_d?.Calle} {lugar_d?.Numero} ({lugar_d?.Latitud};{lugar_d?.Longitud})");
                     }
                 }
                 catch (Exception ex)

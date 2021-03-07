@@ -21,7 +21,8 @@ BEGIN
 		[HoraFin]		TIME NULL,
 		
 		[IdTransporte]	INT NULL,
-		[Observaciones]	NVARCHAR(200) NULL
+		[Observaciones]	NVARCHAR(200) NULL,
+		[FechaStr] VARCHAR(MAX) NULL
 	);
 
 	ALTER TABLE Viaje
